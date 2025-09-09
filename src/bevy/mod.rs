@@ -117,7 +117,7 @@ use bevy::prelude::*;
 
 use crate::bevy::asset::{MidiFile, MidiFileLoader};
 
-pub mod asset;
+//pub mod asset;
 // pub mod input;
 // pub mod output;
 //pub mod plugin;

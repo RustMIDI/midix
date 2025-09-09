@@ -50,8 +50,8 @@ pub use target::*;
 //#[cfg(feature = "bevy_resources")]
 //pub mod bevy;
 
-#[cfg(feature = "bevy")]
-pub mod bevy;
+// #[cfg(feature = "bevy")]
+// pub mod bevy;
 
 pub mod prelude {
     #![doc = r#"
