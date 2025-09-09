@@ -6,6 +6,7 @@ use core::time::Duration;
 A wrapper around some type with an associated accumulated tick
 "#]
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub struct Ticked<T> {
     /// In ticks
     accumulated_ticks: u32,

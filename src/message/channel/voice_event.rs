@@ -16,6 +16,7 @@ use crate::prelude::*;
 /// [`LiveEvent::parse`](live/enum.LiveEvent.html#method.parse) method instead and ignore all
 /// variants except for [`LiveEvent::Midi`](live/enum.LiveEvent.html#variant.Midi).
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub enum VoiceEvent {
     /// Modify the value of a MIDI controller.
     ControlChange(Controller),

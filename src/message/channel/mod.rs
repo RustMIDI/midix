@@ -23,6 +23,7 @@ pub use voice_event::*;
 #[doc = r#"
 The set of possible Channel messages
 "#]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub enum ChannelMessage {
     /// A channel voice message
     Voice(ChannelVoiceMessage),

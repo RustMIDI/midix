@@ -13,6 +13,7 @@ where
 
 "#]
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub struct SongPositionPointer {
     lsb: DataByte,
     msb: DataByte,

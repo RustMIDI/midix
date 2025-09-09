@@ -25,7 +25,10 @@ assert_eq!(key.octave(), Octave::new(4))
 ```
 "#]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug, Hash)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Component))]
+#[cfg_attr(
+    feature = "bevy",
+    derive(bevy::prelude::Component, bevy::prelude::Reflect)
+)]
 pub struct Key(DataByte);
 
 impl Key {
@@ -217,6 +220,7 @@ fn test_octave() {
 
 #[allow(missing_docs)]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 #[doc = r#"
 Identifies some note for a [`Key`]
 
@@ -400,6 +404,7 @@ assert_eq!(key.note(), Note::C);
 ```
 "#]
 #[derive(PartialEq, Debug, Clone, Copy)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub struct Octave(i8);
 
 impl Octave {
