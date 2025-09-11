@@ -1,5 +1,5 @@
 use crate::{
-    Controller, Key, ParseError, PitchBend, Program, StatusByte, Velocity,
+    Controller, Note, ParseError, PitchBend, Program, StatusByte, Velocity,
     channel::Channel,
     events::FromLiveEventBytes,
     message::VoiceEvent,
@@ -42,7 +42,7 @@ impl ChannelVoiceMessage {
     {
         let msg = match status.byte() >> 4 {
             0x8 => VoiceEvent::NoteOff {
-                key: Key::from_databyte(reader.read_next()?)
+                note: Note::from_databyte(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                 velocity: Velocity::new(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
@@ -52,14 +52,14 @@ impl ChannelVoiceMessage {
                 let velocity = reader.read_next()?;
 
                 VoiceEvent::NoteOn {
-                    key: Key::from_databyte(key)
+                    note: Note::from_databyte(key)
                         .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                     velocity: Velocity::new(velocity)
                         .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                 }
             }
             0xA => VoiceEvent::Aftertouch {
-                key: Key::from_databyte(reader.read_next()?)
+                note: Note::from_databyte(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                 velocity: Velocity::new(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
@@ -104,11 +104,11 @@ impl ChannelVoiceMessage {
     }
 
     /// Returns the key if the event has a key
-    pub fn key(&self) -> Option<&Key> {
+    pub fn key(&self) -> Option<&Note> {
         match &self.event {
-            VoiceEvent::NoteOn { key, .. }
-            | VoiceEvent::NoteOff { key, .. }
-            | VoiceEvent::Aftertouch { key, .. } => Some(key),
+            VoiceEvent::NoteOn { note: key, .. }
+            | VoiceEvent::NoteOff { note: key, .. }
+            | VoiceEvent::Aftertouch { note: key, .. } => Some(key),
             _ => None,
         }
     }
@@ -129,9 +129,9 @@ impl ChannelVoiceMessage {
     pub fn data_1_byte(&self) -> u8 {
         use VoiceEvent as V;
         match &self.event {
-            V::NoteOn { key, .. } | V::NoteOff { key, .. } | V::Aftertouch { key, .. } => {
-                key.byte()
-            }
+            V::NoteOn { note: key, .. }
+            | V::NoteOff { note: key, .. }
+            | V::Aftertouch { note: key, .. } => key.byte(),
             V::ControlChange(c) => c.to_bytes()[0],
             V::ProgramChange { program } => program.byte(),
             V::ChannelPressureAfterTouch { velocity } => velocity.byte(),
@@ -184,15 +184,15 @@ impl FromLiveEventBytes for ChannelVoiceMessage {
     {
         let msg = match status >> 4 {
             0x8 => VoiceEvent::NoteOff {
-                key: Key::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
+                note: Note::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0x9 => VoiceEvent::NoteOn {
-                key: Key::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
+                note: Note::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0xA => VoiceEvent::Aftertouch {
-                key: Key::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
+                note: Note::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0xB => {
