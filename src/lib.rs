@@ -30,8 +30,8 @@ mod velocity;
 pub use velocity::*;
 
 #[macro_use]
-mod key;
-pub use key::*;
+mod note;
+pub use note::*;
 
 mod controller;
 pub use controller::*;
@@ -65,8 +65,8 @@ pub mod prelude {
         events::*,
         file::*,
         file_repr::{chunk::*, meta::*, track::*, *},
-        key,
         message::{MidiMessage, channel::*, system::*, time::*},
+        note,
     };
 
     pub use crate::reader::{MidiSource, ReadResult, Reader};

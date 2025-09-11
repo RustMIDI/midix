@@ -110,10 +110,10 @@ impl Note {
 /// assert_eq!(my_key, Key::new(Note::C, Octave::new(2)));
 /// ```
 #[macro_export]
-macro_rules! key {
-    ($note:ident, $oct:literal) => {
-        ::midix::prelude::Key::new(
-            ::midix::prelude::Note::$note,
+macro_rules! note {
+    ($key:ident, $oct:literal) => {
+        ::midix::prelude::Note::new(
+            ::midix::prelude::Key::$key,
             ::midix::prelude::Octave::new($oct),
         )
     };
