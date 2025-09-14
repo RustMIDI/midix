@@ -96,22 +96,31 @@ impl VoiceEvent {
         ChannelVoiceMessage::new(channel, self)
     }
 
-    /// Returns true if the note is on. This excludes note on where the velocity is zero.
-    pub fn is_note_on(&self) -> bool {
+    /// Returns Some(note) if the note is on. This excludes note on where the velocity is zero.
+    pub fn is_note_on(&self) -> Option<Note> {
         use VoiceEvent::*;
         match self {
-            NoteOn { velocity, .. } => velocity.byte() != 0,
-            _ => false,
+            NoteOn { velocity, note } => (velocity.byte() != 0).then_some(*note),
+            _ => None,
+        }
+    }
+    /// Returns the note if a note is present in the variant
+    pub fn note(&self) -> Option<Note> {
+        match self {
+            VoiceEvent::NoteOn { note, .. }
+            | VoiceEvent::NoteOff { note, .. }
+            | VoiceEvent::Aftertouch { note, .. } => Some(*note),
+            _ => None,
         }
     }
 
-    /// Returns true if the note is off. This includes note on where the velocity is zero.
-    pub fn is_note_off(&self) -> bool {
+    /// Returns Some(note) if the note is off. This includes note on where the velocity is zero.
+    pub fn is_note_off(&self) -> Option<Note> {
         use VoiceEvent::*;
         match self {
-            NoteOff { .. } => true,
-            NoteOn { velocity, .. } => velocity.byte() == 0,
-            _ => false,
+            NoteOff { note, .. } => Some(*note),
+            NoteOn { velocity, note } => (velocity.byte() == 0).then_some(*note),
+            _ => None,
         }
     }
 

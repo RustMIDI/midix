@@ -93,24 +93,19 @@ impl ChannelVoiceMessage {
         Channel::from_status(self.status.byte())
     }
 
-    /// Returns true if the note is on. This excludes note on where the velocity is zero.
-    pub fn is_note_on(&self) -> bool {
+    /// Returns Some(note) if the note is on. This excludes note on where the velocity is zero.
+    pub fn is_note_on(&self) -> Option<Note> {
         self.event.is_note_on()
     }
 
-    /// Returns true if the note is off. This includes note on where the velocity is zero.
-    pub fn is_note_off(&self) -> bool {
+    /// Returns Some(note) if the note is off. This includes note on where the velocity is zero.
+    pub fn is_note_off(&self) -> Option<Note> {
         self.event.is_note_off()
     }
 
     /// Returns the key if the event has a key
-    pub fn key(&self) -> Option<&Note> {
-        match &self.event {
-            VoiceEvent::NoteOn { note: key, .. }
-            | VoiceEvent::NoteOff { note: key, .. }
-            | VoiceEvent::Aftertouch { note: key, .. } => Some(key),
-            _ => None,
-        }
+    pub fn note(&self) -> Option<Note> {
+        self.event.note()
     }
 
     /// Returns the velocity if the type has a velocity
