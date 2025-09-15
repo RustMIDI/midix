@@ -6,7 +6,7 @@ use crate::{prelude::*, utils::check_u7};
 A System Common Message, used to relay data for ALL receivers, regardless of channel.
 "#]
 #[derive(Clone, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
 pub enum SystemCommonMessage<'a> {
     /// A system-exclusive message.
     ///

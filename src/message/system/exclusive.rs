@@ -42,7 +42,7 @@ is used for extensions called Universal Exclusive Messages.
 ```
 "#]
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
 pub struct SystemExclusiveMessage<'a>(Cow<'a, [u8]>);
 
 impl<'a> SystemExclusiveMessage<'a> {

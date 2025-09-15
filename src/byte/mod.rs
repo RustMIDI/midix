@@ -161,7 +161,7 @@ Except for Real-Time messages, new Status bytes will always command a receiver t
 even if the last message was not completed.
 "#]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct StatusByte(u8);
 
 impl core::fmt::Debug for StatusByte {

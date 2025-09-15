@@ -4,7 +4,7 @@ use core::fmt;
 /// Identifies the velocity of a key press, or a key unpress, or an aftertouch.
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
 #[cfg_attr(
-    feature = "bevy",
+    feature = "bevy_resources",
     derive(bevy::prelude::Reflect, bevy::prelude::Component)
 )]
 pub struct Velocity(DataByte);

@@ -26,7 +26,7 @@ assert_eq!(key.octave(), Octave::new(4))
 "#]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug, Hash)]
 #[cfg_attr(
-    feature = "bevy",
+    feature = "bevy_resources",
     derive(bevy::prelude::Component, bevy::prelude::Reflect)
 )]
 pub struct Note(DataByte);

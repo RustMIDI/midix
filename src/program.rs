@@ -5,7 +5,7 @@ use core::fmt;
 ///
 /// TODO docs
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
 pub struct Program(DataByte);
 
 impl Program {
