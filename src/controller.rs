@@ -16,6 +16,7 @@ use crate::{prelude::*, reader::ReaderError};
 #[non_exhaustive]
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Controller {
     /// 0x00
     BankSelection(DataByte),

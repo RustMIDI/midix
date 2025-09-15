@@ -7,6 +7,7 @@ A System Common Message, used to relay data for ALL receivers, regardless of cha
 "#]
 #[derive(Clone, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SystemCommonMessage<'a> {
     /// A system-exclusive message.
     ///

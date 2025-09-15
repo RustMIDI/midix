@@ -8,7 +8,8 @@ use crate::prelude::*;
 ///
 /// This value is available via [`PitchBend::value`]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PitchBend {
     lsb: DataByte,
     msb: DataByte,

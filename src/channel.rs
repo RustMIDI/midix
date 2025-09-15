@@ -21,6 +21,7 @@ use crate::message::{ChannelVoiceMessage, VoiceEvent};
     feature = "bevy_resources",
     derive(bevy::prelude::Component, bevy::prelude::Reflect)
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(u8)]
 pub enum Channel {
     /// 0bxxxx0000

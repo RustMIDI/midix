@@ -37,6 +37,8 @@ impl<T> Ticked<T> {
 ///
 /// This differs from `Ticked`, which does not necessarily represent itself in time.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Timed<T> {
     /// Micros
     pub timestamp: u64,

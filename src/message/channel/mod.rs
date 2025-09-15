@@ -23,7 +23,8 @@ pub use voice_event::*;
 #[doc = r#"
 The set of possible Channel messages
 "#]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ChannelMessage {
     /// A channel voice message
     Voice(ChannelVoiceMessage),

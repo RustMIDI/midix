@@ -162,6 +162,7 @@ even if the last message was not completed.
 "#]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StatusByte(u8);
 
 impl core::fmt::Debug for StatusByte {

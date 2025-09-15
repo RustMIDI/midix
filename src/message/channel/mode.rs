@@ -43,8 +43,9 @@ c = 127, v = 0: Poly Mode On (Mono Off) (Note:
 These four messages also cause All Notes Off)
 "#]
 #[allow(dead_code)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 #[derive(Debug)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChannelModeMessage {
     controller: Controller,
     value: DataByte,
