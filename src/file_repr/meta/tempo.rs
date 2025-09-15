@@ -2,6 +2,7 @@
 ///
 /// FF 51 03 tttttt
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct Tempo(u32);
 
 impl Default for Tempo {

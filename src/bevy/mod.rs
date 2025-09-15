@@ -113,20 +113,38 @@ fn scale_me(synth: Res<Synth>, time: Res<Time>, mut scale: Local<Scale>) {
 "#]
 #![warn(missing_docs)]
 
-#[cfg(feature = "std")]
-pub mod asset;
-pub mod input;
-pub mod output;
-pub mod plugin;
-pub mod settings;
-pub mod synth;
+use bevy::prelude::*;
+
+use crate::bevy::asset::{MidiFile, MidiFileLoader};
+
+//pub mod asset;
+// pub mod input;
+// pub mod output;
+//pub mod plugin;
+// pub mod settings;
+// pub mod synth;
 
 pub mod song;
 
-/// Commonly re-exported types
-pub mod prelude {
-    pub use crate::bevy::{input::*, output::*, plugin::*, settings::*, song::*, synth::*};
+// /// Commonly re-exported types
+// pub mod prelude {
+//     pub use crate::bevy::{input::*, output::*, plugin::*, settings::*, song::*, synth::*};
 
-    #[cfg(feature = "std")]
-    pub use crate::bevy::asset::*;
+//     #[cfg(feature = "std")]
+//     pub use crate::bevy::asset::*;
+// }
+
+/// Includes the miminal working components
+/// of `midix`
+///
+/// This includes asset loaders for [`MidiFile`]
+pub struct MidixMinimalPlugin;
+
+impl Plugin for MidixMinimalPlugin {
+    fn build(&self, app: &mut App) {
+        app.init_asset_loader::<MidiFileLoader>()
+            .init_asset::<MidiFile>();
+
+        //todod
+    }
 }

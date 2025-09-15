@@ -1,5 +1,5 @@
 use crate::{
-    Controller, Key, ParseError, PitchBend, Program, StatusByte, Velocity,
+    Controller, Note, ParseError, PitchBend, Program, StatusByte, Velocity,
     channel::Channel,
     events::FromLiveEventBytes,
     message::VoiceEvent,
@@ -16,7 +16,8 @@ use crate::{
 /// [`LiveEvent::parse`](live/enum.LiveEvent.html#method.parse) method instead and ignore all
 /// variants except for [`LiveEvent::Midi`](live/enum.LiveEvent.html#variant.Midi).
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Event))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChannelVoiceMessage {
     /// The MIDI channel that this event is associated with.
     /// Used for getting the channel as the status' lsb contains the channel
@@ -42,7 +43,7 @@ impl ChannelVoiceMessage {
     {
         let msg = match status.byte() >> 4 {
             0x8 => VoiceEvent::NoteOff {
-                key: Key::from_databyte(reader.read_next()?)
+                note: Note::from_databyte(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                 velocity: Velocity::new(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
@@ -52,14 +53,14 @@ impl ChannelVoiceMessage {
                 let velocity = reader.read_next()?;
 
                 VoiceEvent::NoteOn {
-                    key: Key::from_databyte(key)
+                    note: Note::from_databyte(key)
                         .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                     velocity: Velocity::new(velocity)
                         .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                 }
             }
             0xA => VoiceEvent::Aftertouch {
-                key: Key::from_databyte(reader.read_next()?)
+                note: Note::from_databyte(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
                 velocity: Velocity::new(reader.read_next()?)
                     .map_err(|v| ReaderError::parse_error(reader.buffer_position(), v))?,
@@ -93,24 +94,19 @@ impl ChannelVoiceMessage {
         Channel::from_status(self.status.byte())
     }
 
-    /// Returns true if the note is on. This excludes note on where the velocity is zero.
-    pub fn is_note_on(&self) -> bool {
+    /// Returns Some(note) if the note is on. This excludes note on where the velocity is zero.
+    pub fn is_note_on(&self) -> Option<Note> {
         self.event.is_note_on()
     }
 
-    /// Returns true if the note is off. This includes note on where the velocity is zero.
-    pub fn is_note_off(&self) -> bool {
+    /// Returns Some(note) if the note is off. This includes note on where the velocity is zero.
+    pub fn is_note_off(&self) -> Option<Note> {
         self.event.is_note_off()
     }
 
     /// Returns the key if the event has a key
-    pub fn key(&self) -> Option<&Key> {
-        match &self.event {
-            VoiceEvent::NoteOn { key, .. }
-            | VoiceEvent::NoteOff { key, .. }
-            | VoiceEvent::Aftertouch { key, .. } => Some(key),
-            _ => None,
-        }
+    pub fn note(&self) -> Option<Note> {
+        self.event.note()
     }
 
     /// Returns the velocity if the type has a velocity
@@ -129,9 +125,9 @@ impl ChannelVoiceMessage {
     pub fn data_1_byte(&self) -> u8 {
         use VoiceEvent as V;
         match &self.event {
-            V::NoteOn { key, .. } | V::NoteOff { key, .. } | V::Aftertouch { key, .. } => {
-                key.byte()
-            }
+            V::NoteOn { note: key, .. }
+            | V::NoteOff { note: key, .. }
+            | V::Aftertouch { note: key, .. } => key.byte(),
             V::ControlChange(c) => c.to_bytes()[0],
             V::ProgramChange { program } => program.byte(),
             V::ChannelPressureAfterTouch { velocity } => velocity.byte(),
@@ -184,15 +180,15 @@ impl FromLiveEventBytes for ChannelVoiceMessage {
     {
         let msg = match status >> 4 {
             0x8 => VoiceEvent::NoteOff {
-                key: Key::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
+                note: Note::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0x9 => VoiceEvent::NoteOn {
-                key: Key::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
+                note: Note::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0xA => VoiceEvent::Aftertouch {
-                key: Key::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
+                note: Note::from_databyte(data.get_byte(0).ok_or(ParseError::MissingData)?)?,
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0xB => {

@@ -24,7 +24,6 @@ impl SoundFont {
     /// Create a new
     fn new(file: &mut &[u8]) -> Self {
         let sf = Sf::new(file).unwrap();
-
         Self { file: Arc::new(sf) }
     }
 }

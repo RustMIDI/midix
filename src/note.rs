@@ -25,10 +25,14 @@ assert_eq!(key.octave(), Octave::new(4))
 ```
 "#]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug, Hash)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Component))]
-pub struct Key(DataByte);
+#[cfg_attr(
+    feature = "bevy_resources",
+    derive(bevy::prelude::Component, bevy::prelude::Reflect)
+)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Note(DataByte);
 
-impl Key {
+impl Note {
     /// Create a new key.
     ///
     /// Checks for correctness (leading 0 bit).
@@ -40,8 +44,8 @@ impl Key {
     }
 
     /// Create all possible keys (128)
-    pub fn all() -> [Key; 128] {
-        core::array::from_fn(|i| Key(DataByte(i as u8)))
+    pub fn all() -> [Note; 128] {
+        core::array::from_fn(|i| Note(DataByte(i as u8)))
     }
 
     /// Create a key from a given note and octave
@@ -51,10 +55,10 @@ impl Key {
     ///
     /// this is because `Key::GSharp-Key::B` for octave 9 is not representable
     /// in midi.
-    pub const fn new(note: Note, octave: Octave) -> Self {
+    pub const fn new(key: Key, octave: Octave) -> Self {
         let octave_byte = (octave.value() + 1) as u8;
 
-        let note_byte = note.get_mod_12();
+        let note_byte = key.get_mod_12();
 
         let octave_mult = (octave_byte) * 12;
 
@@ -67,8 +71,8 @@ impl Key {
 
     /// Identifies the note of the key pressed
     #[inline]
-    pub const fn note(&self) -> Note {
-        Note::from_data_byte(&self.0)
+    pub const fn key(&self) -> Key {
+        Key::from_data_byte(&self.0)
     }
 
     /// Returns true if the note of the key is sharp. Same as `is_flat`
@@ -76,14 +80,14 @@ impl Key {
     /// See [`Note::is_sharp`] for an example
     #[inline]
     pub const fn is_sharp(&self) -> bool {
-        self.note().is_sharp()
+        self.key().is_sharp()
     }
 
     /// Returns true if the note of the key is flat. Same as `is_sharp`
     /// See [`Note::is_flat`] for an example
     #[inline]
     pub const fn is_flat(&self) -> bool {
-        self.note().is_flat()
+        self.key().is_flat()
     }
 
     /// Identifies the octave of the key pressed
@@ -107,30 +111,30 @@ impl Key {
 /// assert_eq!(my_key, Key::new(Note::C, Octave::new(2)));
 /// ```
 #[macro_export]
-macro_rules! key {
-    ($note:ident, $oct:literal) => {
-        ::midix::prelude::Key::new(
-            ::midix::prelude::Note::$note,
+macro_rules! note {
+    ($key:ident, $oct:literal) => {
+        ::midix::prelude::Note::new(
+            ::midix::prelude::Key::$key,
             ::midix::prelude::Octave::new($oct),
         )
     };
 }
 
-impl fmt::Display for Key {
+impl fmt::Display for Note {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}:{}", self.note(), self.octave())
+        write!(f, "{}:{}", self.key(), self.octave())
     }
 }
 
-impl Add<u8> for Key {
-    type Output = Key;
+impl Add<u8> for Note {
+    type Output = Note;
     fn add(self, rhs: u8) -> Self::Output {
         let next = (self.0.0 + rhs).min(127);
         Self(DataByte(next))
     }
 }
 
-impl AddAssign<u8> for Key {
+impl AddAssign<u8> for Note {
     fn add_assign(&mut self, rhs: u8) {
         if self.0.0 >= 127 {
             return;
@@ -140,15 +144,15 @@ impl AddAssign<u8> for Key {
     }
 }
 
-impl Sub<u8> for Key {
-    type Output = Key;
+impl Sub<u8> for Note {
+    type Output = Note;
     fn sub(self, rhs: u8) -> Self::Output {
         let next = self.0.0.saturating_sub(rhs);
         Self(DataByte(next))
     }
 }
 
-impl SubAssign<u8> for Key {
+impl SubAssign<u8> for Note {
     fn sub_assign(&mut self, rhs: u8) {
         let next = self.0.0.saturating_sub(rhs);
         self.0.0 = next;
@@ -157,66 +161,67 @@ impl SubAssign<u8> for Key {
 
 #[test]
 fn add_to_note() {
-    let key = Key::new(Note::C, Octave::new(9));
+    let key = Note::new(Key::C, Octave::new(9));
     let plus_one = key + 1;
-    assert_eq!(plus_one, Key::new(Note::CSharp, Octave::new(9)));
+    assert_eq!(plus_one, Note::new(Key::CSharp, Octave::new(9)));
 
     let plus_alot = key + 50;
-    assert_eq!(plus_alot, Key::new(Note::G, Octave::new(9)));
+    assert_eq!(plus_alot, Note::new(Key::G, Octave::new(9)));
 }
 
 #[test]
 fn add_assign_to_note() {
-    let mut key = Key::new(Note::C, Octave::new(9));
+    let mut key = Note::new(Key::C, Octave::new(9));
     key += 1;
-    assert_eq!(key, Key::new(Note::CSharp, Octave::new(9)));
+    assert_eq!(key, Note::new(Key::CSharp, Octave::new(9)));
 
     key += 50;
-    assert_eq!(key, Key::new(Note::G, Octave::new(9)));
+    assert_eq!(key, Note::new(Key::G, Octave::new(9)));
 }
 
 #[test]
 fn sub_from_note() {
-    let key = Key::new(Note::C, Octave::new(9));
+    let key = Note::new(Key::C, Octave::new(9));
     let minus_one = key - 1;
-    assert_eq!(minus_one, Key::new(Note::B, Octave::new(8)));
+    assert_eq!(minus_one, Note::new(Key::B, Octave::new(8)));
 
     let minus_alot = key - 220;
-    assert_eq!(minus_alot, Key::new(Note::C, Octave::new(-1)));
+    assert_eq!(minus_alot, Note::new(Key::C, Octave::new(-1)));
 }
 
 #[test]
 fn subassign_note() {
-    let mut key = Key::new(Note::C, Octave::new(9));
+    let mut key = Note::new(Key::C, Octave::new(9));
     key -= 1;
-    assert_eq!(key, Key::new(Note::B, Octave::new(8)));
+    assert_eq!(key, Note::new(Key::B, Octave::new(8)));
 
     key -= 220;
-    assert_eq!(key, Key::new(Note::C, Octave::new(-1)));
+    assert_eq!(key, Note::new(Key::C, Octave::new(-1)));
 }
 
 #[test]
 fn test_note() {
-    let c = Key::from_databyte(12).unwrap();
+    let c = Note::from_databyte(12).unwrap();
 
-    assert_eq!(Note::C, c.note());
+    assert_eq!(Key::C, c.key());
 
-    let a_sharp = Key::from_databyte(94).unwrap();
-    assert_eq!(Note::ASharp, a_sharp.note());
+    let a_sharp = Note::from_databyte(94).unwrap();
+    assert_eq!(Key::ASharp, a_sharp.key());
 }
 
 #[test]
 fn test_octave() {
-    let c = Key::from_databyte(12).unwrap();
+    let c = Note::from_databyte(12).unwrap();
 
     assert_eq!(0, c.octave().value());
 
-    let a_sharp = Key::from_databyte(94).unwrap();
+    let a_sharp = Note::from_databyte(94).unwrap();
     assert_eq!(6, a_sharp.octave().value());
 }
 
 #[allow(missing_docs)]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 #[doc = r#"
 Identifies some note for a [`Key`]
 
@@ -234,7 +239,7 @@ assert_eq!(key.octave().value(), 4);
 assert_eq!(key.note(), Note::FSharp);
 ```
 "#]
-pub enum Note {
+pub enum Key {
     C,
     CSharp,
     D,
@@ -248,10 +253,10 @@ pub enum Note {
     ASharp,
     B,
 }
-impl Note {
+impl Key {
     /// Returns an array beginning with [`Note::C`] to [`Note::B`]
-    pub fn all() -> [Note; 12] {
-        use Note::*;
+    pub fn all() -> [Key; 12] {
+        use Key::*;
         [C, CSharp, D, DSharp, E, F, FSharp, G, GSharp, A, ASharp, B]
     }
     // /// Create a new note from a byte with a leading 0
@@ -296,7 +301,7 @@ impl Note {
     /// ```
     #[inline]
     pub const fn is_sharp(&self) -> bool {
-        use Note::*;
+        use Key::*;
         matches!(self, CSharp | DSharp | FSharp | GSharp | ASharp)
     }
 
@@ -318,7 +323,7 @@ impl Note {
     /// Identify the note from a key byte.
     #[inline]
     pub const fn from_data_byte(key: &DataByte) -> Self {
-        use Note::*;
+        use Key::*;
         let note = key.value() % 12;
 
         match note {
@@ -338,7 +343,7 @@ impl Note {
         }
     }
     const fn get_mod_12(&self) -> u8 {
-        use Note::*;
+        use Key::*;
         match self {
             C => 0,
             CSharp => 1,
@@ -356,13 +361,13 @@ impl Note {
     }
 
     /// Create a [`Key`] given this note and a provided [`Octave`]
-    pub const fn with_octave(self, octave: Octave) -> Key {
-        Key::new(self, octave)
+    pub const fn with_octave(self, octave: Octave) -> Note {
+        Note::new(self, octave)
     }
 }
-impl fmt::Display for Note {
+impl fmt::Display for Key {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Note::*;
+        use Key::*;
         match self {
             C => write!(f, "C"),
             CSharp => write!(f, "C#/Db"),
@@ -400,6 +405,7 @@ assert_eq!(key.note(), Note::C);
 ```
 "#]
 #[derive(PartialEq, Debug, Clone, Copy)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub struct Octave(i8);
 
 impl Octave {
@@ -425,8 +431,8 @@ impl Octave {
     }
 
     /// Create a [`Key`] given this octave and a provided [`Note`]
-    pub fn with_note(self, note: Note) -> Key {
-        Key::new(note, self)
+    pub fn with_note(self, note: Key) -> Note {
+        Note::new(note, self)
     }
 }
 
@@ -463,17 +469,17 @@ impl SubAssign<i8> for Octave {
 }
 
 #[test]
-fn key_from_note_octave_pairs() {
+fn note_from_key_octave_pairs() {
     for key_byte in 0..128 {
-        let key = Key::from_databyte(key_byte).unwrap();
+        let key = Note::from_databyte(key_byte).unwrap();
 
-        let exp_note = key.note();
+        let exp_note = key.key();
         let exp_oct = key.octave();
 
-        let made_key = Key::new(exp_note, exp_oct);
+        let made_key = Note::new(exp_note, exp_oct);
 
         assert_eq!(exp_oct, made_key.octave());
-        assert_eq!(exp_note, made_key.note());
-        assert_eq!(key, Key::new(exp_note, exp_oct));
+        assert_eq!(exp_note, made_key.key());
+        assert_eq!(key, Note::new(exp_note, exp_oct));
     }
 }

@@ -133,21 +133,21 @@ fn midi_file_ref() {
     /*************/
 
     use Channel::*;
-    note_on(&mut reader, 0, Three, Note::C, 3, Dynamic::ff());
-    note_on(&mut reader, 0, Three, Note::C, 4, Dynamic::ff());
-    note_on(&mut reader, 96, Two, Note::G, 4, Dynamic::mf());
-    note_on(&mut reader, 96, One, Note::E, 5, Dynamic::p());
-    note_off(&mut reader, 192, Three, Note::C, 3);
-    note_off(&mut reader, 0, Three, Note::C, 4);
-    note_off(&mut reader, 0, Two, Note::G, 4);
-    note_off(&mut reader, 0, One, Note::E, 5);
+    note_on(&mut reader, 0, Three, Key::C, 3, Dynamic::ff());
+    note_on(&mut reader, 0, Three, Key::C, 4, Dynamic::ff());
+    note_on(&mut reader, 96, Two, Key::G, 4, Dynamic::mf());
+    note_on(&mut reader, 96, One, Key::E, 5, Dynamic::p());
+    note_off(&mut reader, 192, Three, Key::C, 3);
+    note_off(&mut reader, 0, Three, Key::C, 4);
+    note_off(&mut reader, 0, Two, Key::G, 4);
+    note_off(&mut reader, 0, One, Key::E, 5);
 }
 
 fn note_on(
     reader: &mut Reader<&[u8]>,
     delta_ticks: u32,
     channel: Channel,
-    note: Note,
+    note: Key,
     octave: i8,
     dynamic: Dynamic,
 ) {
@@ -159,21 +159,19 @@ fn note_on(
         panic!();
     };
     assert_eq!(cv.channel(), channel);
-    let VoiceEvent::NoteOn { key, velocity } = cv.event() else {
+    let VoiceEvent::NoteOn {
+        note: key,
+        velocity,
+    } = cv.event()
+    else {
         panic!();
     };
-    assert_eq!(key.note(), note);
+    assert_eq!(key.key(), note);
     assert_eq!(key.octave(), Octave::new(octave));
     assert_eq!(velocity.dynamic(), dynamic);
 }
 
-fn note_off(
-    reader: &mut Reader<&[u8]>,
-    delta_ticks: u32,
-    channel: Channel,
-    note: Note,
-    octave: i8,
-) {
+fn note_off(reader: &mut Reader<&[u8]>, delta_ticks: u32, channel: Channel, note: Key, octave: i8) {
     let Ok(FileEvent::TrackEvent(track_event)) = reader.read_event() else {
         panic!()
     };
@@ -184,13 +182,19 @@ fn note_off(
     assert_eq!(cv.channel(), channel);
 
     match cv.event() {
-        VoiceEvent::NoteOn { key, velocity } => {
+        VoiceEvent::NoteOn {
+            note: key,
+            velocity,
+        } => {
             assert_eq!(velocity.byte(), 0);
-            assert_eq!(key.note(), note);
+            assert_eq!(key.key(), note);
             assert_eq!(key.octave(), Octave::new(octave));
         }
-        VoiceEvent::NoteOff { key, velocity: _ } => {
-            assert_eq!(key.note(), note);
+        VoiceEvent::NoteOff {
+            note: key,
+            velocity: _,
+        } => {
+            assert_eq!(key.key(), note);
             assert_eq!(key.octave(), Octave::new(octave));
         }
         _ => panic!(),

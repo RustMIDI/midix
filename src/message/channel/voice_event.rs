@@ -16,6 +16,8 @@ use crate::prelude::*;
 /// [`LiveEvent::parse`](live/enum.LiveEvent.html#method.parse) method instead and ignore all
 /// variants except for [`LiveEvent::Midi`](live/enum.LiveEvent.html#variant.Midi).
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum VoiceEvent {
     /// Modify the value of a MIDI controller.
     ControlChange(Controller),
@@ -28,14 +30,14 @@ pub enum VoiceEvent {
     /// Stop playing a note.
     NoteOff {
         /// The MIDI key to stop playing.
-        key: Key,
+        note: Note,
         /// The velocity with which to stop playing it.
         velocity: Velocity,
     },
     /// Start playing a note.
     NoteOn {
         /// The key to start playing.
-        key: Key,
+        note: Note,
 
         /// The velocity (strength) with which to press it.
         ///
@@ -45,8 +47,8 @@ pub enum VoiceEvent {
     },
     /// Modify the velocity of a note after it has been played.
     Aftertouch {
-        /// The key for which to modify its velocity.
-        key: Key,
+        /// The note for which to modify its velocity.
+        note: Note,
         /// The new velocity for the key.
         velocity: Velocity,
     },
@@ -62,16 +64,16 @@ pub enum VoiceEvent {
 
 impl VoiceEvent {
     /// Create a note on voice event
-    pub const fn note_on(key: Key, velocity: Velocity) -> Self {
-        Self::NoteOn { key, velocity }
+    pub const fn note_on(note: Note, velocity: Velocity) -> Self {
+        Self::NoteOn { note, velocity }
     }
     /// Create a note off voice event
-    pub const fn note_off(key: Key, velocity: Velocity) -> Self {
-        Self::NoteOff { key, velocity }
+    pub const fn note_off(note: Note, velocity: Velocity) -> Self {
+        Self::NoteOff { note, velocity }
     }
     /// Modify the velocity of a currently played key
-    pub const fn after_touch(key: Key, velocity: Velocity) -> Self {
-        Self::Aftertouch { key, velocity }
+    pub const fn after_touch(note: Note, velocity: Velocity) -> Self {
+        Self::Aftertouch { note, velocity }
     }
     /// Modify the velocity of all currently played keys
     pub const fn channel_after_touch(velocity: Velocity) -> Self {
@@ -95,22 +97,31 @@ impl VoiceEvent {
         ChannelVoiceMessage::new(channel, self)
     }
 
-    /// Returns true if the note is on. This excludes note on where the velocity is zero.
-    pub fn is_note_on(&self) -> bool {
+    /// Returns Some(note) if the note is on. This excludes note on where the velocity is zero.
+    pub fn is_note_on(&self) -> Option<Note> {
         use VoiceEvent::*;
         match self {
-            NoteOn { velocity, .. } => velocity.byte() != 0,
-            _ => false,
+            NoteOn { velocity, note } => (velocity.byte() != 0).then_some(*note),
+            _ => None,
+        }
+    }
+    /// Returns the note if a note is present in the variant
+    pub fn note(&self) -> Option<Note> {
+        match self {
+            VoiceEvent::NoteOn { note, .. }
+            | VoiceEvent::NoteOff { note, .. }
+            | VoiceEvent::Aftertouch { note, .. } => Some(*note),
+            _ => None,
         }
     }
 
-    /// Returns true if the note is off. This includes note on where the velocity is zero.
-    pub fn is_note_off(&self) -> bool {
+    /// Returns Some(note) if the note is off. This includes note on where the velocity is zero.
+    pub fn is_note_off(&self) -> Option<Note> {
         use VoiceEvent::*;
         match self {
-            NoteOff { .. } => true,
-            NoteOn { velocity, .. } => velocity.byte() == 0,
-            _ => false,
+            NoteOff { note, .. } => Some(*note),
+            NoteOn { velocity, note } => (velocity.byte() == 0).then_some(*note),
+            _ => None,
         }
     }
 

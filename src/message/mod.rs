@@ -55,6 +55,8 @@ pub use time::*;
 An enumeration of all possible midi messages
 "#]
 #[derive(Debug)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum MidiMessage<'a> {
     /// A system common message
     SysCommon(SystemCommonMessage<'a>),

@@ -6,6 +6,7 @@ use core::time::Duration;
 A wrapper around some type with an associated accumulated tick
 "#]
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 pub struct Ticked<T> {
     /// In ticks
     accumulated_ticks: u32,
@@ -36,6 +37,8 @@ impl<T> Ticked<T> {
 ///
 /// This differs from `Ticked`, which does not necessarily represent itself in time.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Timed<T> {
     /// Micros
     pub timestamp: u64,
