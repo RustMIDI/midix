@@ -205,7 +205,7 @@ impl TryFrom<u8> for StatusByte {
 Data Byte is between [0x00 and 0x7F]
 "#]
 #[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct DataByte(pub(crate) u8);
 impl Debug for DataByte {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

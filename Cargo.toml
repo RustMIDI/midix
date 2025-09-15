@@ -26,7 +26,7 @@ bevy_resources = [
     "dep:rustysynth",
     "dep:crossbeam-channel",
 ]
-bevy = ["dep:bevy", "bevy/bevy_log", "std"]
+bevy = ["bevy_resources", "bevy/bevy_log", "std", "bevy/bevy_asset"]
 debug = ["bevy_resources"]
 example = [
     "bevy_resources",

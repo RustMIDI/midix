@@ -3,6 +3,7 @@ use crate::prelude::*;
 #[doc = r#"
    Information about the timing of the MIDI file
 "#]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct Header {
     timing: Timing,
 }

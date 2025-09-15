@@ -113,6 +113,7 @@ impl RawHeaderChunk {
 /// This is either the number of ticks per quarter note or
 /// the alternative SMTPE format. See the [`RawHeaderChunk`] docs for more information.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub enum Timing {
     /// The midi file's delta times are defined using a tick rate per quarter note
     TicksPerQuarterNote(TicksPerQuarterNote),
@@ -123,6 +124,7 @@ pub enum Timing {
 
 /// A representation of the `tpqn` timing for a MIDI file
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct TicksPerQuarterNote {
     inner: [u8; 2],
 }
@@ -136,6 +138,7 @@ impl TicksPerQuarterNote {
 
 /// A representation of the `smpte` timing for a MIDI file
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct SmpteHeader {
     fps: SmpteFps,
     ticks_per_frame: DataByte,

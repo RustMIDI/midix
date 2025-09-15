@@ -18,7 +18,7 @@ use crate::message::{ChannelVoiceMessage, VoiceEvent};
     Clone, Copy, PartialEq, Eq, Debug, Hash, IntoPrimitive, TryFromPrimitive, PartialOrd, Ord,
 )]
 #[cfg_attr(
-    feature = "bevy",
+    feature = "bevy_resources",
     derive(bevy::prelude::Component, bevy::prelude::Reflect)
 )]
 #[repr(u8)]
