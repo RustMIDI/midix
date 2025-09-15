@@ -7,6 +7,7 @@ use core::fmt;
     feature = "bevy_resources",
     derive(bevy::prelude::Reflect, bevy::prelude::Component)
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Velocity(DataByte);
 
 impl Velocity {

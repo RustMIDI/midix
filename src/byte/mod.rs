@@ -206,6 +206,7 @@ Data Byte is between [0x00 and 0x7F]
 "#]
 #[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DataByte(pub(crate) u8);
 impl Debug for DataByte {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

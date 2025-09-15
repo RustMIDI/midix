@@ -29,6 +29,7 @@ assert_eq!(key.octave(), Octave::new(4))
     feature = "bevy_resources",
     derive(bevy::prelude::Component, bevy::prelude::Reflect)
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Note(DataByte);
 
 impl Note {
