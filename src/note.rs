@@ -33,7 +33,7 @@ assert_eq!(key.octave(), Octave::new(4))
 pub struct Note(DataByte);
 
 impl Note {
-    /// Create a new key.
+    /// Create a new note.
     ///
     /// Checks for correctness (leading 0 bit).
     pub fn from_databyte<B>(rep: B) -> Result<Self, ParseError>
@@ -43,12 +43,17 @@ impl Note {
         rep.try_into().map(Self)
     }
 
-    /// Create all possible keys (128)
+    /// Creates a new note without checking for the validity of the byte
+    pub const fn from_databyte_unchecked(byte: u8) -> Self {
+        Self(DataByte::new_unchecked(byte))
+    }
+
+    /// Create all possible notes (128)
     pub fn all() -> [Note; 128] {
         core::array::from_fn(|i| Note(DataByte(i as u8)))
     }
 
-    /// Create a key from a given note and octave
+    /// Create a note from a given key and octave
     ///
     /// # Panics
     /// if you pass in, on `Octave::new(9)` a Key greater than `Key::G`.
@@ -69,46 +74,46 @@ impl Note {
         Self(DataByte(octave_mult + note_byte))
     }
 
-    /// Identifies the note of the key pressed
+    /// Identifies the key of the note pressed
     #[inline]
     pub const fn key(&self) -> Key {
         Key::from_data_byte(&self.0)
     }
 
-    /// Returns true if the note of the key is sharp. Same as `is_flat`
+    /// Returns true if the key of the note is sharp. Same as `is_flat`
     ///
-    /// See [`Note::is_sharp`] for an example
+    /// See [`Key::is_sharp`] for an example
     #[inline]
     pub const fn is_sharp(&self) -> bool {
         self.key().is_sharp()
     }
 
-    /// Returns true if the note of the key is flat. Same as `is_sharp`
-    /// See [`Note::is_flat`] for an example
+    /// Returns true if the key of the note is flat. Same as `is_sharp`
+    /// See [`Key::is_flat`] for an example
     #[inline]
     pub const fn is_flat(&self) -> bool {
         self.key().is_flat()
     }
 
-    /// Identifies the octave of the key pressed
+    /// Identifies the octave of the note pressed
     #[inline]
     pub fn octave(&self) -> Octave {
         Octave::from_data_byte(&self.0)
     }
 
-    /// Returns the underlying byte of the key
+    /// Returns the underlying byte of the note
     pub fn byte(&self) -> u8 {
         self.0.0
     }
 }
-/// Efficiently make a key.
+/// Efficiently make a note.
 ///
 ///
 /// ## Example
 /// ```rust
 /// # use midix::prelude::*;
-/// let my_key = key!(C, 2);
-/// assert_eq!(my_key, Key::new(Note::C, Octave::new(2)));
+/// let my_note= note!(C, 2);
+/// assert_eq!(my_note, Note::new(Key::C, Octave::new(2)));
 /// ```
 #[macro_export]
 macro_rules! note {
