@@ -47,12 +47,6 @@ pub use song_position_pointer::*;
 mod target;
 pub use target::*;
 
-//#[cfg(feature = "bevy")]
-//pub mod bevy;
-
-// #[cfg(feature = "bevy")]
-// pub mod bevy;
-
 pub mod prelude {
     #![doc = r#"
         Common re-exports when working with `midix`
