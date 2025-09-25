@@ -1,6 +1,6 @@
 [package]
 name = "midix"
-version = "4.0.0-alpha"
+version = "4.0.0-alpha.0"
 authors = ["dsgallups <dsgallups@protonmail.com>"]
 edition = "2024"
 description = "MIDI structures designed for humans"
@@ -17,7 +17,7 @@ exclude = ["assets/*"]
 default = ["std"]
 std = ["thiserror/std", "num_enum/std", "crossbeam-channel/std"]
 web = ["bevy_platform/web"]
-bevy = ["dep:bevy", "std"]
+bevy = ["dep:bevy"]
 bevy_asset = ["bevy/bevy_asset"]
 serde = ["dep:serde"]
 
