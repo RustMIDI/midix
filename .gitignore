@@ -11,3 +11,4 @@ midix_wasm_example/target
 !/assets/8bitsf.sf2
 midix_wasm_example/dist
 .zed
+Cargo.lock
