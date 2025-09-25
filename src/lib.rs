@@ -30,8 +30,8 @@ mod velocity;
 pub use velocity::*;
 
 #[macro_use]
-mod key;
-pub use key::*;
+mod note;
+pub use note::*;
 
 mod controller;
 pub use controller::*;
@@ -47,8 +47,11 @@ pub use song_position_pointer::*;
 mod target;
 pub use target::*;
 
-#[cfg(feature = "bevy")]
-pub mod bevy;
+//#[cfg(feature = "bevy_resources")]
+//pub mod bevy;
+
+// #[cfg(feature = "bevy")]
+// pub mod bevy;
 
 pub mod prelude {
     #![doc = r#"
@@ -62,8 +65,8 @@ pub mod prelude {
         events::*,
         file::*,
         file_repr::{chunk::*, meta::*, track::*, *},
-        key,
         message::{MidiMessage, channel::*, system::*, time::*},
+        note,
     };
 
     pub use crate::reader::{MidiSource, ReadResult, Reader};
@@ -73,6 +76,6 @@ pub mod prelude {
 
     pub use core::fmt::Display;
 
-    #[cfg(feature = "bevy")]
-    pub use crate::bevy::prelude::*;
+    //#[cfg(feature = "bevy_resources")]
+    //pub use crate::bevy::prelude::*;
 }

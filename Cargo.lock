@@ -2336,6 +2336,7 @@ dependencies = [
  "num_enum",
  "pretty_assertions",
  "rustysynth",
+ "serde",
  "thiserror 2.0.12",
  "tinyaudio",
 ]

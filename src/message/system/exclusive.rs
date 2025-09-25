@@ -41,8 +41,9 @@ be interleaved with a System Exclusive.) This message also
 is used for extensions called Universal Exclusive Messages.
 ```
 "#]
-//TODO
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SystemExclusiveMessage<'a>(Cow<'a, [u8]>);
 
 impl<'a> SystemExclusiveMessage<'a> {

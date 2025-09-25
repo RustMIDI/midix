@@ -15,6 +15,8 @@ use crate::{prelude::*, reader::ReaderError};
 /// in a "coarse" manner.
 #[non_exhaustive]
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Controller {
     /// 0x00
     BankSelection(DataByte),
@@ -163,6 +165,13 @@ impl Controller {
             ResetAllControllers(b) => [0x79, b.value()],
             Mute(b) => [0x7B, b.value()],
             Other { byte_1, byte_2 } => [byte_1.value(), byte_2.value()],
+        }
+    }
+    /// the damper pedal message
+    pub fn damper_pedal(value: DataByte) -> Self {
+        Self::Other {
+            byte_1: DataByte::new_unchecked(0x40),
+            byte_2: value,
         }
     }
 }

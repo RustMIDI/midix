@@ -11,6 +11,7 @@ use crate::{
 A set of track events
 "#]
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct Track<'a> {
     info: TrackInfo<'a>,
     events: Vec<Ticked<LiveEvent<'a>>>,
@@ -72,6 +73,7 @@ impl<'a> Track<'a> {
 /// Provides information about the track
 #[allow(missing_docs)]
 #[derive(Default, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct TrackInfo<'a> {
     pub time_signature: TimeSignature,
     pub name: Option<BytesText<'a>>,

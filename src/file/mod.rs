@@ -24,9 +24,17 @@ use crate::{
 #[doc = r#"
 TODO
 "#]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub struct ParsedMidiFile<'a> {
     header: Header,
     format: Format<'a>,
+}
+#[cfg(feature = "bevy")]
+impl bevy::asset::Asset for ParsedMidiFile<'static> {}
+
+#[cfg(feature = "bevy")]
+impl bevy::asset::VisitAssetDependencies for ParsedMidiFile<'static> {
+    fn visit_dependencies(&self, _visit: &mut impl FnMut(bevy::asset::UntypedAssetId)) {}
 }
 
 impl<'a> ParsedMidiFile<'a> {

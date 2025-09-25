@@ -49,6 +49,7 @@ impl MidiSong {
     pub fn builder() -> MidiSongBuilder {
         MidiSongBuilder::default()
     }
+
     /// Create a set of commands
     pub fn new(events: Vec<Timed<ChannelVoiceMessage>>) -> Self {
         Self {

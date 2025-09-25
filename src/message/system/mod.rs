@@ -25,6 +25,8 @@ pub use exclusive::*;
 #[doc = r#"
 The set of possible System messages
 "#]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SystemMessage<'a> {
     /// The set of common messages. Only found in MIDI files
     Common(SystemCommonMessage<'a>),

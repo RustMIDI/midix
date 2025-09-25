@@ -6,6 +6,7 @@
 /// - 29: dropframe 30 (30,000 frames / 1001 seconds)
 /// - 30: 30fps
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
 pub enum SmpteFps {
     /// 24
     TwentyFour,
