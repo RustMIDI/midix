@@ -13,7 +13,7 @@ They are usually time-sensitive, get top priority and can even be transmitted in
 messages.
 "#]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Hash)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::prelude::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::prelude::Reflect))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SystemRealTimeMessage {
     /// If sent, they should be sent 24 times per quarter note.

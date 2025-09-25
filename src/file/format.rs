@@ -21,7 +21,7 @@ sequence number.*/
 Holds the tracks based on the supplied format
 "#]
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub enum Format<'a> {
     /// Format 0
     SingleMultiChannel(Track<'a>),

@@ -44,7 +44,7 @@ An emittable message to/from a streaming MIDI device.
 There is currently no `StreamReader` type, so this type is most often manually constructed.
 "]
 #[derive(Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub enum LiveEvent<'a> {
     /// A MIDI voice message associated with a channel
     ChannelVoice(ChannelVoiceMessage),

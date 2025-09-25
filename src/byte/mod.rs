@@ -161,7 +161,7 @@ Except for Real-Time messages, new Status bytes will always command a receiver t
 even if the last message was not completed.
 "#]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StatusByte(u8);
 
@@ -206,7 +206,7 @@ impl TryFrom<u8> for StatusByte {
 Data Byte is between [0x00 and 0x7F]
 "#]
 #[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DataByte(pub(crate) u8);
 impl Debug for DataByte {

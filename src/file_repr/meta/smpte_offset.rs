@@ -2,7 +2,7 @@ use crate::{SmpteError, prelude::SmpteFps};
 
 /// A representation of a track's offset from the beginning of a midi file.
 #[derive(Clone, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct SmpteOffset {
     /// the track's fps. Note: this should be identical to a file's FPS if
     /// the file is defined in terms of `smpte`

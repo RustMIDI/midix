@@ -6,7 +6,7 @@ use crate::ParseError;
 
 /// Some text, usually identified by a ['MetaMessage'](super::MetaMessage)s
 #[derive(Clone, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct BytesText<'a> {
     inner: Cow<'a, [u8]>,
 }

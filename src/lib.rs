@@ -1,5 +1,5 @@
 #![warn(missing_docs)]
-#![cfg_attr(not(feature = "debug"), warn(clippy::print_stdout))]
+#![warn(clippy::print_stdout)]
 #![doc = include_str!("../README.md")]
 #![no_std]
 
@@ -47,12 +47,6 @@ pub use song_position_pointer::*;
 mod target;
 pub use target::*;
 
-//#[cfg(feature = "bevy_resources")]
-//pub mod bevy;
-
-// #[cfg(feature = "bevy")]
-// pub mod bevy;
-
 pub mod prelude {
     #![doc = r#"
         Common re-exports when working with `midix`
@@ -76,6 +70,6 @@ pub mod prelude {
 
     pub use core::fmt::Display;
 
-    //#[cfg(feature = "bevy_resources")]
+    //#[cfg(feature = "bevy")]
     //pub use crate::bevy::prelude::*;
 }

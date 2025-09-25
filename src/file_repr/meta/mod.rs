@@ -5,7 +5,6 @@ Contains types that deal with file ['MetaMessage']s
 mod tempo;
 
 use alloc::borrow::Cow;
-use num_enum::TryFromPrimitive;
 pub use tempo::*;
 mod time_signature;
 pub use time_signature::*;
@@ -99,12 +98,12 @@ impl<'a> MetaMessage<'a> {
                 }
                 //TODO: need to test thsi
                 let c = data.first().unwrap();
-                MetaMessage::MidiChannel(Channel::try_from_primitive(*c).map_err(|e| {
+                MetaMessage::MidiChannel(Channel::try_from_byte(*c).ok_or(
                     ReaderError::parse_error(
                         reader.buffer_position(),
-                        ParseError::InvalidChannel(e.number),
-                    )
-                })?)
+                        ParseError::InvalidChannel(*c),
+                    ),
+                )?)
             }
             0x21 => {
                 if data.len() != 1 {

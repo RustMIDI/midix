@@ -26,7 +26,7 @@ That is, 6/8 time (8 is 2 to the 3rd power, so this is 06 03),
 eight notated 32nd-notes per quarter-note.
 "#]
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct TimeSignature([u8; 4]);
 
 impl Default for TimeSignature {
