@@ -15,37 +15,36 @@ exclude = ["assets/*"]
 
 [features]
 default = ["std"]
-all = ["std", "bevy_resources", "web"]
 std = ["thiserror/std", "num_enum/std", "crossbeam-channel/std"]
 web = ["bevy_platform/web"]
-bevy_resources = [
-    "bevy",
-    "dep:midir",
-    "dep:tinyaudio",
-    "dep:itertools",
-    "dep:rustysynth",
-    "dep:crossbeam-channel",
-]
-bevy = ["bevy_resources", "bevy/bevy_log", "std", "bevy/bevy_asset"]
-debug = ["bevy_resources"]
-example = [
-    "bevy_resources",
-    "std",
-    "bevy/bevy_color",
-    "bevy/bevy_core_pipeline",
-    "bevy/bevy_ui",
-    "bevy/bevy_ui_picking_backend",
-    "bevy/bevy_winit",
-    "bevy/bevy_window",
-    "bevy/x11",
-    # note that the wasm example freezes since when this feature is not enabled! TODO
-    "bevy/multi_threaded",
-]
+# bevy_resources = [
+#     "bevy",
+#     "dep:midir",
+#     "dep:tinyaudio",
+#     "dep:itertools",
+#     "dep:rustysynth",
+#     "dep:crossbeam-channel",
+# ]
+bevy = ["dep:bevy", "std", "bevy/bevy_asset"]
+# debug = ["bevy_resources"]
+# example = [
+#     "bevy_resources",
+#     "std",
+#     "bevy/bevy_color",
+#     "bevy/bevy_core_pipeline",
+#     "bevy/bevy_ui",
+#     "bevy/bevy_ui_picking_backend",
+#     "bevy/bevy_winit",
+#     "bevy/bevy_window",
+#     "bevy/x11",
+#     # note that the wasm example freezes since when this feature is not enabled! TODO
+#     "bevy/multi_threaded",
+# ]
 serde = ["dep:serde"]
 
 
 [dependencies.bevy]
-version = "0.17.0-rc.1"
+version = "0.17.0-rc"
 optional = true
 default-features = false
 # features = ["async_executor", "bevy_log", "bevy_state", "bevy_asset", "std"]

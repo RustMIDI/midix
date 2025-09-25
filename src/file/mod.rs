@@ -24,7 +24,7 @@ use crate::{
 #[doc = r#"
 TODO
 "#]
-#[cfg_attr(feature = "bevy_resources", derive(bevy::reflect::Reflect))]
+#[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct ParsedMidiFile<'a> {
     header: Header,
     format: Format<'a>,

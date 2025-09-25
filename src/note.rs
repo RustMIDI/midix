@@ -26,7 +26,7 @@ assert_eq!(key.octave(), Octave::new(4))
 "#]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug, Hash)]
 #[cfg_attr(
-    feature = "bevy_resources",
+    feature = "bevy",
     derive(bevy::prelude::Component, bevy::prelude::Reflect)
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
