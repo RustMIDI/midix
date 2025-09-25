@@ -7,16 +7,12 @@ use core::{
     ops::{Add, AddAssign, Sub, SubAssign},
 };
 
-use num_enum::{IntoPrimitive, TryFromPrimitive};
-
 use crate::message::{ChannelVoiceMessage, VoiceEvent};
 
 /// Identifies a channel for MIDI.
 ///
 /// To get this channel from a `u8`, use [`Channel::try_from_primitive`].
-#[derive(
-    Clone, Copy, PartialEq, Eq, Debug, Hash, IntoPrimitive, TryFromPrimitive, PartialOrd, Ord,
-)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
 #[cfg_attr(
     feature = "bevy",
     derive(bevy::prelude::Component, bevy::prelude::Reflect)
@@ -76,6 +72,33 @@ impl Channel {
     pub const fn send_event(self, event: VoiceEvent) -> ChannelVoiceMessage {
         ChannelVoiceMessage::new(self, event)
     }
+    /// Create a `Channel` from a byte.
+    ///
+    /// 0 -> `Channel::One`
+    /// ..
+    /// 15 -> `Channel::Sixteen`
+    pub const fn try_from_byte(byte: u8) -> Option<Channel> {
+        let channel = match byte {
+            0 => Channel::One,
+            1 => Channel::Two,
+            2 => Channel::Three,
+            3 => Channel::Four,
+            4 => Channel::Five,
+            5 => Channel::Six,
+            6 => Channel::Seven,
+            7 => Channel::Eight,
+            8 => Channel::Nine,
+            9 => Channel::Ten,
+            10 => Channel::Eleven,
+            11 => Channel::Twelve,
+            12 => Channel::Thirteen,
+            13 => Channel::Fourteen,
+            14 => Channel::Fifteen,
+            15 => Channel::Sixteen,
+            _ => return None,
+        };
+        Some(channel)
+    }
 
     /// Given a status byte from some [`ChannelVoiceMessage`], perform bitwise ops
     /// to get the channel
@@ -97,7 +120,7 @@ impl Channel {
 
 impl fmt::Display for Channel {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let res: u8 = (*self).into();
+        let res: u8 = *self as u8;
         res.fmt(f)
     }
 }
