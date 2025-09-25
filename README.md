@@ -1,5 +1,5 @@
 # MIDIx
-[<img alt="github" src="https://img.shields.io/badge/github-dsgallups/color-gen?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/dsgallups/midix)
+[<img alt="github" src="https://img.shields.io/badge/github-RustMIDI/midix?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/RustMIDI/midix)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/midix.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/midix)
 
 
