@@ -16,12 +16,12 @@ Each value corresponds to some [`Note`] and [`Octave`].
 ```rust
 # use midix::prelude::*;
 
-let key_byte = 63;
+let note_byte = 63;
 
-let key = Key::from_databyte(key_byte).unwrap(); // 63 is between 0-127
+let note = Note::from_databyte(note_byte).unwrap(); // 63 is between 0-127
 
-assert_eq!(key.note(), Note::DSharp);
-assert_eq!(key.octave(), Octave::new(4))
+assert_eq!(note.key(), Key::DSharp);
+assert_eq!(note.octave(), Octave::new(4))
 ```
 "#]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug, Hash)]
@@ -118,9 +118,9 @@ impl Note {
 #[macro_export]
 macro_rules! note {
     ($key:ident, $oct:literal) => {
-        ::midix::prelude::Note::new(
-            ::midix::prelude::Key::$key,
-            ::midix::prelude::Octave::new($oct),
+        $crate::prelude::Note::new(
+            $crate::prelude::Key::$key,
+            $crate::prelude::Octave::new($oct),
         )
     };
 }
@@ -234,14 +234,14 @@ Identifies some note for a [`Key`]
 ```rust
 # use midix::prelude::*;
 
-let note = Note::FSharp;
+let key = Key::FSharp;
 
 
-let key = note.with_octave(Octave::new(4));
+let note = key.with_octave(Octave::new(4));
 
 
-assert_eq!(key.octave().value(), 4);
-assert_eq!(key.note(), Note::FSharp);
+assert_eq!(note.octave().value(), 4);
+assert_eq!(note.key(), Key::FSharp);
 ```
 "#]
 pub enum Key {
@@ -299,10 +299,10 @@ impl Key {
     /// # Example
     /// ```rust
     /// # use midix::prelude::*;
-    /// let note = Note::C;
-    /// assert!(!note.is_sharp());
-    /// let note = Note::FSharp;
-    /// assert!(note.is_sharp());
+    /// let key = Key::C;
+    /// assert!(!key.is_sharp());
+    /// let key = Key::FSharp;
+    /// assert!(key.is_sharp());
     /// ```
     #[inline]
     pub const fn is_sharp(&self) -> bool {
@@ -315,10 +315,10 @@ impl Key {
     /// # Example
     /// ```rust
     /// # use midix::prelude::*;
-    /// let note = Note::A;
-    /// assert!(!note.is_flat());
-    /// let note = Note::CSharp;
-    /// assert!(note.is_flat());
+    /// let key = Key::A;
+    /// assert!(!key.is_flat());
+    /// let key = Key::CSharp;
+    /// assert!(key.is_flat());
     /// ```
     #[inline]
     pub const fn is_flat(&self) -> bool {
@@ -402,11 +402,11 @@ let octave = Octave::new(12); // clamps to 9
 
 assert_eq!(octave.value(), 9);
 
-let key = octave.with_note(Note::C);
+let note = octave.with_key(Key::C);
 
 
-assert_eq!(key.octave().value(), 9);
-assert_eq!(key.note(), Note::C);
+assert_eq!(note.octave().value(), 9);
+assert_eq!(note.key(), Key::C);
 ```
 "#]
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -436,7 +436,7 @@ impl Octave {
     }
 
     /// Create a [`Key`] given this octave and a provided [`Note`]
-    pub fn with_note(self, note: Key) -> Note {
+    pub fn with_key(self, note: Key) -> Note {
         Note::new(note, self)
     }
 }
