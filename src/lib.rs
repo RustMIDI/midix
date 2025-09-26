@@ -47,6 +47,9 @@ pub use song_position_pointer::*;
 mod target;
 pub use target::*;
 
+mod micros;
+pub use micros::*;
+
 pub mod prelude {
     #![doc = r#"
         Common re-exports when working with `midix`
