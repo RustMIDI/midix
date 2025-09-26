@@ -63,6 +63,7 @@ pub mod prelude {
         file::*,
         file_repr::{chunk::*, meta::*, track::*, *},
         message::{MidiMessage, channel::*, system::*, time::*},
+        micros::*,
         note,
     };
 
@@ -72,7 +73,4 @@ pub mod prelude {
     pub(crate) use crate::reader::inv_data;
 
     pub use core::fmt::Display;
-
-    //#[cfg(feature = "bevy")]
-    //pub use crate::bevy::prelude::*;
 }
