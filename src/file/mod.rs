@@ -29,6 +29,7 @@ use crate::{
 #[doc = r#"
 TODO
 "#]
+#[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct ParsedMidiFile<'a> {
     header: Header,
@@ -100,7 +101,3 @@ impl<'a> ParsedMidiFile<'a> {
         }
     }
 }
-/*
-
-
-*/
