@@ -1,3 +1,15 @@
+# 4.0.0 (unreleased)
+## Features
+- `MidiFile::into_events` returns an iterator of `Timed<LiveEvent>`
+- `Micros` and `UMicros`: strongly typed microseconds
+- `DurationExt` for `core::time::Duration`. Converts the duration into `UMicros`
+
+## Breaking Changes
+- `Note` -> `Key`, and `Key` -> `Note`
+  - `key!` -> `note!`
+  - All variants that contained a `key` field have been replaced with a `note` field
+
+
 # 3.2.0
 ## `bevy_midix` (April 15, 2025)
 - feat: WASM compatability with example!
