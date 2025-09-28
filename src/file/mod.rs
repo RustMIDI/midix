@@ -31,19 +31,19 @@ TODO
 "#]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
-pub struct ParsedMidiFile<'a> {
+pub struct MidiFile<'a> {
     header: Header,
     format: Format<'a>,
 }
 #[cfg(feature = "bevy_asset")]
-impl bevy::asset::Asset for ParsedMidiFile<'static> {}
+impl bevy::asset::Asset for MidiFile<'static> {}
 
 #[cfg(feature = "bevy_asset")]
-impl bevy::asset::VisitAssetDependencies for ParsedMidiFile<'static> {
+impl bevy::asset::VisitAssetDependencies for MidiFile<'static> {
     fn visit_dependencies(&self, _visit: &mut impl FnMut(bevy::asset::UntypedAssetId)) {}
 }
 
-impl<'a> ParsedMidiFile<'a> {
+impl<'a> MidiFile<'a> {
     /// Parse a set of bytes into a file struct
     pub fn parse<B>(bytes: B) -> ReadResult<Self>
     where

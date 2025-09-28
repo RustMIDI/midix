@@ -32,7 +32,7 @@ pub struct TimedEventIterator<'a> {
     file_tempo: Option<Tempo>,
 }
 impl<'a> TimedEventIterator<'a> {
-    pub(super) fn new(file: ParsedMidiFile<'a>) -> Option<Self> {
+    pub(super) fn new(file: MidiFile<'a>) -> Option<Self> {
         let header = file.header;
 
         let (size, tracks, next, file_tempo) = match file.format {
@@ -248,7 +248,7 @@ fn test_empty_file_returns_none_iterator() {
         inner: [0x01, 0xE0],
     }));
     let format = Format::Simultaneous(alloc::vec![]);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let mut iter = file.into_events();
     assert_eq!(iter.next(), None);
@@ -262,7 +262,7 @@ fn test_single_track_single_event() {
     let events = alloc::vec![tempo_event(0, 500_000), note_on_event(0, 60, 100, 0),];
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let mut iter = file.into_events();
     let event = iter.next().unwrap();
@@ -292,7 +292,7 @@ fn test_single_track_multiple_events_with_delta_time() {
     ];
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 3);
@@ -321,7 +321,7 @@ fn test_simultaneous_format_multiple_tracks() {
     let track2 = Track::new(track2_events);
 
     let format = Format::Simultaneous(alloc::vec![track1, track2]);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 4);
@@ -353,7 +353,7 @@ fn test_sequentially_independent_format() {
     let track2 = Track::new(track2_events);
 
     let format = Format::SequentiallyIndependent(alloc::vec![track1, track2]);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 4);
@@ -379,7 +379,7 @@ fn test_smpte_timing() {
     ];
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 3);
@@ -422,7 +422,7 @@ fn test_mixed_event_types() {
 
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 4);
@@ -481,7 +481,7 @@ fn test_system_exclusive_events() {
 
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 3);
@@ -506,7 +506,7 @@ fn test_file_tempo_override_in_simultaneous_format() {
     let track2 = Track::new(track2_events);
 
     let format = Format::Simultaneous(alloc::vec![track1, track2]);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 2);
@@ -534,7 +534,7 @@ fn test_empty_track_handling() {
     let track3 = Track::new(track3_events);
 
     let format = Format::Simultaneous(alloc::vec![track1, track2, track3]);
-    let file = ParsedMidiFile { header, format };
+    let file = MidiFile { header, format };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
 
