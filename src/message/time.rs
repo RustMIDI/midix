@@ -10,7 +10,7 @@ A wrapper around some type with an associated accumulated tick
 pub struct Ticked<T> {
     /// In ticks
     accumulated_ticks: u32,
-    event: T,
+    pub(crate) event: T,
 }
 
 impl<T> Ticked<T> {

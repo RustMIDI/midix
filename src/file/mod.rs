@@ -15,8 +15,13 @@ pub use header::*;
 mod track;
 pub use track::*;
 
+mod timed_event_iter;
+pub use timed_event_iter::*;
+
 use crate::{
     ParseError,
+    events::LiveEvent,
+    message::Timed,
     prelude::FormatType,
     reader::{ReadResult, Reader, ReaderError, ReaderErrorKind},
 };
@@ -86,4 +91,16 @@ impl<'a> ParsedMidiFile<'a> {
             Format::SingleMultiChannel(_) => FormatType::SingleMultiChannel,
         }
     }
+
+    /// Returns a set of timed events from the midi file.
+    pub fn into_events(self) -> impl Iterator<Item = Timed<LiveEvent<'a>>> {
+        match TimedEventIterator::new(self) {
+            Some(iter) => OptTimedEventIterator::Some(iter),
+            None => OptTimedEventIterator::None,
+        }
+    }
 }
+/*
+
+
+*/

@@ -15,10 +15,11 @@ exclude = ["assets/*"]
 
 [features]
 default = ["std"]
-std = ["thiserror/std"]
+std = ["thiserror/std", "tracing?/std", "bevy?/std"]
 web = ["bevy_platform/web"]
 bevy = ["dep:bevy"]
 bevy_asset = ["bevy/bevy_asset"]
+tracing = ["dep:tracing"]
 serde = ["dep:serde"]
 
 
@@ -34,6 +35,7 @@ bevy_platform = { version = "0.17.0-rc", optional = true, default-features = fal
     "alloc",
 ] }
 serde = {version = "1.0", features = ["derive"], optional = true}
+tracing = { version = "0.1.41", default-features = false, optional = true }
 
 [dev-dependencies]
 pretty_assertions = { default-features = false, features = [

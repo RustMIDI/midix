@@ -14,7 +14,7 @@ A set of track events
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct Track<'a> {
     info: TrackInfo<'a>,
-    events: Vec<Ticked<LiveEvent<'a>>>,
+    pub(crate) events: Vec<Ticked<LiveEvent<'a>>>,
 }
 
 impl<'a> Track<'a> {
