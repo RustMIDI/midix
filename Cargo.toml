@@ -10,7 +10,7 @@ readme = "README.md"
 keywords = ["midi", "audio", "parser", "bevy"]
 categories = ["multimedia::audio", "multimedia::encoding", "multimedia"]
 license = "MIT OR Apache-2.0"
-exclude = ["assets/*"]
+exclude = ["assets/*", "test-asset"]
 
 
 [features]
