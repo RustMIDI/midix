@@ -87,6 +87,9 @@ impl<'a> Iterator for TimedEventIterator<'a> {
             }
         }
     }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (self.len_remaining, Some(self.len_remaining))
+    }
 }
 
 struct CurrentTrack<'a> {
