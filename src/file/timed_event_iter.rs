@@ -72,19 +72,18 @@ impl<'a> TimedEventIterator<'a> {
 impl<'a> Iterator for TimedEventIterator<'a> {
     type Item = Timed<LiveEvent<'a>>;
     fn next(&mut self) -> Option<Self::Item> {
-        match self.cur_track.next() {
-            Some(event) => {
-                self.len_remaining -= 1;
-                Some(event)
-            }
-            None => {
-                let next_track = self.tracks.next()?;
-                let mut next_track =
-                    CurrentTrack::new(next_track, self.file_tempo, self.header.timing());
-                let next_ev = next_track.next()?;
-                self.len_remaining -= 1;
-                self.cur_track = next_track;
-                Some(next_ev)
+        loop {
+            match self.cur_track.next() {
+                Some(event) => {
+                    self.len_remaining -= 1;
+                    return Some(event);
+                }
+                None => {
+                    let next_track = self.tracks.next()?;
+                    let next_track =
+                        CurrentTrack::new(next_track, self.file_tempo, self.header.timing());
+                    self.cur_track = next_track;
+                }
             }
         }
     }
