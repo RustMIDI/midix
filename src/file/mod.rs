@@ -15,8 +15,13 @@ pub use header::*;
 mod track;
 pub use track::*;
 
+mod timed_event_iter;
+pub use timed_event_iter::*;
+
 use crate::{
     ParseError,
+    events::LiveEvent,
+    message::Timed,
     prelude::FormatType,
     reader::{ReadResult, Reader, ReaderError, ReaderErrorKind},
 };
@@ -24,20 +29,21 @@ use crate::{
 #[doc = r#"
 TODO
 "#]
+#[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
-pub struct ParsedMidiFile<'a> {
+pub struct MidiFile<'a> {
     header: Header,
     format: Format<'a>,
 }
 #[cfg(feature = "bevy_asset")]
-impl bevy::asset::Asset for ParsedMidiFile<'static> {}
+impl bevy::asset::Asset for MidiFile<'static> {}
 
 #[cfg(feature = "bevy_asset")]
-impl bevy::asset::VisitAssetDependencies for ParsedMidiFile<'static> {
+impl bevy::asset::VisitAssetDependencies for MidiFile<'static> {
     fn visit_dependencies(&self, _visit: &mut impl FnMut(bevy::asset::UntypedAssetId)) {}
 }
 
-impl<'a> ParsedMidiFile<'a> {
+impl<'a> MidiFile<'a> {
     /// Parse a set of bytes into a file struct
     pub fn parse<B>(bytes: B) -> ReadResult<Self>
     where
@@ -84,6 +90,14 @@ impl<'a> ParsedMidiFile<'a> {
             Format::SequentiallyIndependent(_) => FormatType::SequentiallyIndependent,
             Format::Simultaneous(_) => FormatType::Simultaneous,
             Format::SingleMultiChannel(_) => FormatType::SingleMultiChannel,
+        }
+    }
+
+    /// Returns a set of timed events from the midi file.
+    pub fn into_events(self) -> impl Iterator<Item = Timed<LiveEvent<'a>>> {
+        match TimedEventIterator::new(self) {
+            Some(iter) => OptTimedEventIterator::Some(iter),
+            None => OptTimedEventIterator::None,
         }
     }
 }

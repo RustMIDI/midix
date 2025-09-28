@@ -126,7 +126,7 @@ pub enum Timing {
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct TicksPerQuarterNote {
-    inner: [u8; 2],
+    pub(crate) inner: [u8; 2],
 }
 impl TicksPerQuarterNote {
     /// Returns the ticks per quarter note for the file.
@@ -140,8 +140,8 @@ impl TicksPerQuarterNote {
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct SmpteHeader {
-    fps: SmpteFps,
-    ticks_per_frame: DataByte,
+    pub(crate) fps: SmpteFps,
+    pub(crate) ticks_per_frame: DataByte,
 }
 
 impl SmpteHeader {

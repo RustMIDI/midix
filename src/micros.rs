@@ -1,5 +1,17 @@
 use core::ops::{Add, AddAssign, Mul, Sub, SubAssign};
 
+/// An extension trait to convert a `Duration` to `UMicros`
+pub trait DurationExt {
+    /// Convert a `Duration` to `UMicros`
+    fn to_micros(&self) -> UMicros;
+}
+
+impl DurationExt for std::time::Duration {
+    fn to_micros(&self) -> UMicros {
+        UMicros(self.as_micros() as u64)
+    }
+}
+
 /// Signed Microseconds
 #[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Default)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
