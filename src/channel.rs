@@ -11,7 +11,7 @@ use crate::message::{ChannelVoiceMessage, VoiceEvent};
 
 /// Identifies a channel for MIDI.
 ///
-/// To get this channel from a `u8`, use [`Channel::try_from_primitive`].
+/// To get this channel from a `u8`, use [`Channel::try_from_byte`].
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
 #[cfg_attr(
     feature = "bevy",
