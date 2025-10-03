@@ -5,11 +5,11 @@ use crate::prelude::*;
 "#]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
-pub struct Header {
+pub struct MidiFileHeader {
     timing: Timing,
 }
 
-impl Header {
+impl MidiFileHeader {
     /// Create a new header from timing
     pub fn new(timing: Timing) -> Self {
         Self { timing }

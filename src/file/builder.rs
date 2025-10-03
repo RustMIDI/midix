@@ -119,7 +119,7 @@ impl<'a> MidiFileBuilder<'a> {
 
         Ok(MidiFile {
             format,
-            header: Header::new(timing),
+            header: MidiFileHeader::new(timing),
         })
     }
 }

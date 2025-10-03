@@ -32,7 +32,7 @@ TODO
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct MidiFile<'a> {
-    header: Header,
+    header: MidiFileHeader,
     format: Format<'a>,
 }
 #[cfg(feature = "bevy_asset")]
@@ -72,7 +72,7 @@ impl<'a> MidiFile<'a> {
     }
 
     /// Returns header info
-    pub fn header(&self) -> &Header {
+    pub fn header(&self) -> &MidiFileHeader {
         &self.header
     }
 

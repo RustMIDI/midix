@@ -26,7 +26,7 @@ impl<'a> Iterator for OptTimedEventIterator<'a> {
 /// An iterator returned from [`ParsedMidiFile::into_events`]
 pub struct TimedEventIterator<'a> {
     len_remaining: usize,
-    header: Header,
+    header: MidiFileHeader,
     tracks: alloc::vec::IntoIter<Track<'a>>,
     cur_track: CurrentTrack<'a>,
     file_tempo: Option<Tempo>,
@@ -244,7 +244,7 @@ fn tempo_event(delta_ticks: u32, micros_per_quarter: u32) -> TrackEvent<'static>
 
 #[test]
 fn test_empty_file_returns_none_iterator() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
     let format = Format::Simultaneous(alloc::vec![]);
@@ -256,7 +256,7 @@ fn test_empty_file_returns_none_iterator() {
 
 #[test]
 fn test_single_track_single_event() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
     let events = alloc::vec![tempo_event(0, 500_000), note_on_event(0, 60, 100, 0),];
@@ -281,7 +281,7 @@ fn test_single_track_single_event() {
 
 #[test]
 fn test_single_track_multiple_events_with_delta_time() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
     let events = alloc::vec![
@@ -306,7 +306,7 @@ fn test_single_track_multiple_events_with_delta_time() {
 
 #[test]
 fn test_simultaneous_format_multiple_tracks() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
 
@@ -334,7 +334,7 @@ fn test_simultaneous_format_multiple_tracks() {
 
 #[test]
 fn test_sequentially_independent_format() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x03, 0xC0],
     }));
 
@@ -370,7 +370,7 @@ fn test_smpte_timing() {
         fps: SmpteFps::Thirty,
         ticks_per_frame: DataByte::new(40).unwrap(),
     };
-    let header = Header::new(Timing::Smpte(smpte));
+    let header = MidiFileHeader::new(Timing::Smpte(smpte));
 
     let events = alloc::vec![
         note_on_event(0, 60, 100, 0),
@@ -391,7 +391,7 @@ fn test_smpte_timing() {
 
 #[test]
 fn test_mixed_event_types() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
 
@@ -464,7 +464,7 @@ fn test_mixed_event_types() {
 
 #[test]
 fn test_system_exclusive_events() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
 
@@ -495,7 +495,7 @@ fn test_system_exclusive_events() {
 
 #[test]
 fn test_file_tempo_override_in_simultaneous_format() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
 
@@ -517,7 +517,7 @@ fn test_file_tempo_override_in_simultaneous_format() {
 
 #[test]
 fn test_empty_track_handling() {
-    let header = Header::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
     }));
 
