@@ -19,7 +19,7 @@ This type is yielded by [`Reader::read_event`] and will be consumed by a Writer 
 
 # Overview
 
-Except [`FileEvent::Eof`] Events can be placed into two categories
+Events can be placed into two categories:
 
 ## Chunk Events
 
