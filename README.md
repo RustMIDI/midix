@@ -7,7 +7,7 @@ A suite of tools used to read, modify, and manage MIDI-related systems
 
 ## Overview
 
-`midix` provides users with human readable MIDI structures without invariant states. That is, the midi 1.0 specification has been strongly typed such that programatic commands built with this crate are not invariant.
+`midix` provides users with human readable MIDI structures without invariant states. That is, the midi 1.0 specification has been strongly typed such that programatic commands built with this crate uphold invariants.
 
 `midix` provides a parser ([`Reader`](crate::prelude::Reader)) to read events from `.mid` files.
 calling [`Reader::read_event`](crate::prelude::Reader::read_event) will yield a [`FileEvent`](crate::prelude::FileEvent).
