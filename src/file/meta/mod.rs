@@ -3,8 +3,6 @@ Contains types that deal with file ['MetaMessage']s
 "#]
 
 mod tempo;
-
-use alloc::borrow::Cow;
 pub use tempo::*;
 mod time_signature;
 pub use time_signature::*;
@@ -16,6 +14,8 @@ mod smpte_offset;
 pub use smpte_offset::*;
 
 use crate::{prelude::*, reader::ReaderError};
+use alloc::borrow::Cow;
+
 /// A "meta message", as defined by the SMF spec.
 /// These are in tracks.
 /// These events carry metadata about the track, such as tempo, time signature, copyright, etc...

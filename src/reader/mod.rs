@@ -17,7 +17,13 @@ pub use error::*;
 pub use source::*;
 use state::{ParseState, ReaderState};
 
-use crate::prelude::*;
+use crate::{
+    file::builder::{
+        chunk::{RawHeaderChunk, RawTrackChunk, TrackChunkHeader, UnknownChunk},
+        event::{ChunkEvent, FileEvent},
+    },
+    prelude::*,
+};
 
 #[doc = r#"
 A MIDI event reader.
@@ -53,6 +59,7 @@ is not true, then the cursor will fail on the next read event.
 # Example
 ```rust
 use midix::prelude::*;
+use midix::file::builder::event::FileEvent;
 
 let midi_header = [
     /* MIDI Header */
@@ -270,7 +277,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                         Ok(c) => c,
                         Err(e) => {
                             if e.is_out_of_bounds() {
-                                return Ok(FileEvent::EOF);
+                                return Ok(FileEvent::Eof);
                             } else {
                                 return Err(e);
                             }
@@ -315,7 +322,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                     let ev = TrackEvent::read(self, &mut running_status)?;
                     break FileEvent::TrackEvent(ev);
                 }
-                ParseState::Done => break FileEvent::EOF,
+                ParseState::Done => break FileEvent::Eof,
             }
         };
 
@@ -348,7 +355,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                             if e.is_out_of_bounds() {
                                 // Inside Midi + UnexpectedEof should only fire at the end of a file.
                                 self.state.set_parse_state(ParseState::Done);
-                                return Ok(ChunkEvent::EOF);
+                                return Ok(ChunkEvent::Eof);
                             } else {
                                 return Err(e);
                             }
@@ -386,7 +393,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                     self.state.set_parse_state(ParseState::InsideMidi);
                     continue;
                 }
-                ParseState::Done => break ChunkEvent::EOF,
+                ParseState::Done => break ChunkEvent::Eof,
             }
         };
 

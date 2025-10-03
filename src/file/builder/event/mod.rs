@@ -1,4 +1,13 @@
-use crate::prelude::*;
+#![doc = r#"
+Contains events that should be yielded when parsing a midi file.
+
+You will may utilize these types when using a [`Reader`].
+"#]
+
+use crate::{
+    file::builder::chunk::{RawHeaderChunk, TrackChunkHeader, UnknownChunk},
+    prelude::*,
+};
 
 mod chunk;
 pub use chunk::*;
@@ -10,7 +19,7 @@ This type is yielded by [`Reader::read_event`] and will be consumed by a Writer 
 
 # Overview
 
-Except [`FileEvent::EOF`] Events can be placed into two categories
+Except [`FileEvent::Eof`] Events can be placed into two categories
 
 ## Chunk Events
 
@@ -64,7 +73,7 @@ pub enum FileEvent<'a> {
     TrackEvent(TrackEvent<'a>),
 
     /// Yielded when no more bytes can be read
-    EOF,
+    Eof,
 }
 
 impl From<RawHeaderChunk> for FileEvent<'_> {

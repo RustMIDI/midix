@@ -13,7 +13,7 @@ pub enum SystemCommonMessage<'a> {
     ///
     /// System Exclusive events start with a `0xF0` byte and finish with a `0xF7` byte.
     ///
-    /// Note that `SystemExclusiveMessage` is found in both [`LiveEvent`]s and [`FileEvent`]s.
+    /// Note that `SystemExclusiveMessage` is found in both [`LiveEvent`]s and [`FileEvent`](crate::file::builder::event::FileEvent)s.
     SystemExclusive(SystemExclusiveMessage<'a>),
 
     /// An undefined System Common message

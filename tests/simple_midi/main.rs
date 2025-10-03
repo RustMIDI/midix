@@ -1,4 +1,4 @@
-use midix::prelude::*;
+use midix::{file::builder::event::FileEvent, prelude::*};
 mod parsed;
 
 /*

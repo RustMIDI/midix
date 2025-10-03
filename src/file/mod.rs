@@ -1,30 +1,33 @@
 #![doc = r#"
 Rusty representation of a [`MidiFile`]
-
-TODO
 "#]
 
-mod builder;
+/// Contains the [`MidiFileBuilder`] and associated [`FileEvent`](builder::event::FileEvent)s.
+pub mod builder;
 
-use alloc::{borrow::Cow, vec::Vec};
-use builder::*;
 mod format;
 pub use format::*;
-mod header;
-pub use header::*;
+
 mod track;
 pub use track::*;
 
 mod timed_event_iter;
 pub use timed_event_iter::*;
 
+mod timing;
+pub use timing::*;
+
+mod meta;
+pub use meta::*;
+
 use crate::{
     ParseError,
     events::LiveEvent,
+    file::builder::MidiFileBuilder,
     message::Timed,
-    prelude::FormatType,
     reader::{ReadResult, Reader, ReaderError, ReaderErrorKind},
 };
+use alloc::{borrow::Cow, vec::Vec};
 
 #[doc = r#"
 TODO
@@ -32,7 +35,7 @@ TODO
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct MidiFile<'a> {
-    header: Header,
+    timing: Timing,
     format: Format<'a>,
 }
 #[cfg(feature = "bevy_asset")]
@@ -72,8 +75,22 @@ impl<'a> MidiFile<'a> {
     }
 
     /// Returns header info
-    pub fn header(&self) -> &Header {
-        &self.header
+    pub fn timing(&self) -> Timing {
+        self.timing
+    }
+
+    /// Executes the provided function for all the tracks in the format.
+    ///
+    /// Useful if you don't want to allocate more data on the stack.
+    pub fn for_each_track<F>(&self, mut func: F)
+    where
+        F: FnMut(&Track),
+    {
+        match &self.format {
+            Format::SequentiallyIndependent(t) => t.iter().for_each(func),
+            Format::Simultaneous(s) => s.iter().for_each(func),
+            Format::SingleMultiChannel(c) => func(c),
+        }
     }
 
     /// Returns a track list

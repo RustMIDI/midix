@@ -1,11 +1,11 @@
-use crate::prelude::*;
+use crate::file::builder::chunk::{RawHeaderChunk, RawTrackChunk, UnknownChunk};
 
 #[doc = r#"
 Reads the full length of all chunk types
 
 
-This is different from [`FileEvent`] such that
-[`FileEvent::TrackEvent`] is not used. Instead,
+This is different from [`FileEvent`](crate::file::builder::event::FileEvent) such that
+[`FileEvent::TrackEvent`](crate::file::builder::event::FileEvent::TrackEvent) is not used. Instead,
 the full set of bytes from the identified track are yielded.
 "#]
 pub enum ChunkEvent<'a> {
@@ -23,7 +23,7 @@ pub enum ChunkEvent<'a> {
     /// See [`UnknownChunk`] for a breakdown on layout
     Unknown(UnknownChunk<'a>),
     /// End of File
-    EOF,
+    Eof,
 }
 
 impl From<RawHeaderChunk> for ChunkEvent<'_> {
@@ -48,6 +48,6 @@ impl ChunkEvent<'_> {
     /// True if the event is the end of a file
     #[inline]
     pub const fn is_eof(&self) -> bool {
-        matches!(self, Self::EOF)
+        matches!(self, Self::Eof)
     }
 }

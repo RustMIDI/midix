@@ -38,11 +38,11 @@ pub trait FromLiveEventBytes {
         Self: Sized;
 }
 
-#[doc = r"
+#[doc = r#"
 An emittable message to/from a streaming MIDI device.
 
-There is currently no `StreamReader` type, so this type is most often manually constructed.
-"]
+This is essentially the root message of all possible messages sent by a midi device.
+"#]
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub enum LiveEvent<'a> {
@@ -65,7 +65,6 @@ impl LiveEvent<'_> {
             _ => None,
         }
     }
-
     // /// Returns the event as a set of bytes. These bytes are to be interpreted by a MIDI live stream
     // pub fn to_bytes(&self) -> Vec<u8> {
     //     match self {
@@ -120,21 +119,21 @@ impl FromLiveEventBytes for LiveEvent<'_> {
     }
 }
 
-// #[test]
-// fn parse_note_on() {
-//     use crate::prelude::*;
-//     let message = [0b1001_0001, 0b0100_1000, 0b001_00001];
-//     let parsed = LiveEvent::from_bytes(&message).unwrap();
-//     //parsed: ChannelVoice(ChannelVoiceMessage { channel: Channel(1), message: NoteOn { key: Key(72), vel: Velocity(33) } })
+#[test]
+fn parse_note_on() {
+    use crate::prelude::*;
+    let message = [0b1001_0001, 0b0100_1000, 0b001_00001];
+    //parsed: ChannelVoice(ChannelVoiceMessage { channel: Channel(1), message: NoteOn { key: Key(72), vel: Velocity(33) } })
+    let parsed = LiveEvent::from_bytes(&message).unwrap();
 
-//     assert_eq!(
-//         parsed,
-//         LiveEvent::ChannelVoice(ChannelVoiceMessage::new(
-//             Channel::Two,
-//             VoiceEvent::NoteOn {
-//                 key: Key::from_databyte(72).unwrap(),
-//                 velocity: Velocity::new(33).unwrap()
-//             }
-//         ))
-//     );
-// }
+    assert_eq!(
+        parsed,
+        LiveEvent::ChannelVoice(ChannelVoiceMessage::new(
+            Channel::Two,
+            VoiceEvent::NoteOn {
+                note: Note::from_databyte(72).unwrap(),
+                velocity: Velocity::new(33).unwrap()
+            }
+        ))
+    );
+}

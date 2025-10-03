@@ -1,11 +1,20 @@
-use alloc::vec::Vec;
+mod format;
+pub use format::*;
 
-use crate::{prelude::*, reader::ReaderErrorKind};
+pub mod chunk;
+
+pub mod event;
 
 use super::MidiFile;
+use crate::{
+    file::builder::{chunk::UnknownChunk, event::ChunkEvent},
+    prelude::*,
+    reader::ReaderErrorKind,
+};
+use alloc::vec::Vec;
 
 #[derive(Default)]
-pub enum FormatStage<'a> {
+enum FormatStage<'a> {
     #[default]
     Unknown,
     KnownFormat(RawFormat),
@@ -13,6 +22,7 @@ pub enum FormatStage<'a> {
     Formatted(Format<'a>),
 }
 
+/// A builder used to create a new [`MidiFile`].
 #[derive(Default)]
 pub struct MidiFileBuilder<'a> {
     format: FormatStage<'a>,
@@ -22,6 +32,7 @@ pub struct MidiFileBuilder<'a> {
 }
 
 impl<'a> MidiFileBuilder<'a> {
+    /// Handles a chunk of a midi file.
     pub fn handle_chunk<'b: 'a>(&mut self, chunk: ChunkEvent<'b>) -> Result<(), ReaderErrorKind> {
         use ChunkEvent::*;
         match chunk {
@@ -106,9 +117,10 @@ impl<'a> MidiFileBuilder<'a> {
                 self.unknown_chunks.push(data);
                 Ok(())
             }
-            EOF => Err(ReaderErrorKind::OutOfBounds),
+            Eof => Err(ReaderErrorKind::OutOfBounds),
         }
     }
+    /// Attempts to finish the midifile from the provided chunks.
     pub fn build(self) -> Result<MidiFile<'a>, FileError> {
         let FormatStage::Formatted(format) = self.format else {
             return Err(FileError::NoFormat);
@@ -117,9 +129,6 @@ impl<'a> MidiFileBuilder<'a> {
             return Err(FileError::NoTiming);
         };
 
-        Ok(MidiFile {
-            format,
-            header: Header::new(timing),
-        })
+        Ok(MidiFile { format, timing })
     }
 }
