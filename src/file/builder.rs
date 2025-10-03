@@ -1,9 +1,6 @@
 use alloc::vec::Vec;
 
-use crate::{
-    prelude::*,
-    reader::{ReadError, ReaderErrorKind},
-};
+use crate::{prelude::*, reader::ReaderErrorKind};
 
 use super::MidiFile;
 
@@ -109,7 +106,7 @@ impl<'a> MidiFileBuilder<'a> {
                 self.unknown_chunks.push(data);
                 Ok(())
             }
-            EOF => Err(ReaderErrorKind::ReadError(ReadError::OutOfBounds)),
+            EOF => Err(ReaderErrorKind::OutOfBounds),
         }
     }
     pub fn build(self) -> Result<MidiFile<'a>, FileError> {

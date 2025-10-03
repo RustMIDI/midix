@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-/// An iterator returned from [`ParsedMidiFile::into_events`].
+/// An iterator returned from [`MidiFile::into_events`].
 pub enum OptTimedEventIterator<'a> {
     /// No tracks in the file
     None,

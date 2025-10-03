@@ -5,9 +5,6 @@
 
 A suite of tools used to read, modify, and manage MIDI-related systems
 
-### NOTE: The main branch is in development. Stable versions are on their own branches.
-
-
 ## Overview
 
 `midix` provides users with human readable MIDI structures without invariant states. That is, the midi 1.0 specification has been strongly typed such that programatic commands built with this crate are not invariant.
@@ -17,11 +14,12 @@ calling [`Reader::read_event`](crate::prelude::Reader::read_event) will yield a 
 
 Additionally, `midix` provides the user with [`LiveEvent::from_bytes`](crate::events::LiveEvent), which will parse events from a live MIDI source.
 
-You may also make your own MIDI representation using the provided structs. A significant portion of
-this library lives within the `bevy` feature. See details below on usage with the bevy engine.
+You may also make your own MIDI representation using the provided structs.
 
 ## Goal
 `midix` is NOT designed to be as fast as possible. It is designed for a user to navigate the MIDI format to read and write to. Instead of working directly with bytes, use language to define what your MIDI is supposed to do.
+
+TODO: Benches
 
 ## Getting Started
 
@@ -83,21 +81,9 @@ assert_eq!(velocity.byte(), 96);
 
 
 ## Semantic Versioning and Support
-`midix` will adhere to semantic versioning. This means that I've opted to use major versions, even if this crate does not consider itself feature complete (you might get a midix `v29.3.1` someday)
+`midix` will adhere to semantic versioning. I've opted to use major versions.
 
 The current MSRV is rust `1.87`
-
-## Acknowledgments
-
-This crate was originally forked from [`bevy_midi`](https://github.com/BlackPhlox/bevy_midi). Please check them out if this crate doesn't suit your needs!
-
-## MIDIx feature roadmap
-- `no_std`
-- Streamer (midir ext)
-- Interfaces between `MidiSource` and `Midi` (some representable MIDI type, like a file, events, etc.)
-- MIDI writers
-  - Streamer (async timed stream event via midir)
-  - MidiFile
 
 ## General feature schedule
 The SUPPORT.md file denotes the length of time major revisions are supported.
@@ -105,14 +91,6 @@ The SUPPORT.md file denotes the length of time major revisions are supported.
 When the major version of the crate is incremented, new features for the previous version(s)
 will likely be neglected. If you need a non-breaking feature for an older version before the end
 of its maintenence period, please let me know!
-
-## Feature roadmap
-- `no_std`
-- Streamer (midir ext)
-- Interfaces between `MidiSource` and `Midi` (some representable MIDI type, like a file, events, etc.)
-- MIDI writers
-  - Streamer (async timed stream event via midir)
-  - MidiFile
 
 ## Acknowledgments
 A lot of the documentation is copied directly from
@@ -126,23 +104,9 @@ EMail: david@csw2.co.uk
 Web: http://www.csw2.co.uk
 ```
 
-Inspired by/copied from
-
-### `midix`
+## Inspired by/copied from
 
 inspired by [`midly`](https://github.com/kovaxis/midly)
 and [`quick-xml`](https://github.com/tafia/quick-xml).
 
-If you are in need of a MIDI writer, I highly
-recommend using `midly`, as this `midix` does not yet
-support file writing.
-
 Thanks to these mainters and contributors for inspiration!
-
-### `bevy` feature
-
-Forked originally from [`bevy_midi`](https://github.com/BlackPhlox/bevy_midi). Huge thank you for the examples and docs!
-
-### hidden `synth` feature
-
-Forked originally from [rustysynth](https://github.com/sinshu/rustysynth).

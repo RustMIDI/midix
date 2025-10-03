@@ -106,7 +106,7 @@ impl Note {
         self.0.0
     }
 }
-/// Efficiently make a note.
+/// Create a note the easy way.
 ///
 ///
 /// ## Example
@@ -259,7 +259,7 @@ pub enum Key {
     B,
 }
 impl Key {
-    /// Returns an array beginning with [`Note::C`] to [`Note::B`]
+    /// Returns an array beginning with [`Key::C`] to [`Key::B`]
     pub fn all() -> [Key; 12] {
         use Key::*;
         [C, CSharp, D, DSharp, E, F, FSharp, G, GSharp, A, ASharp, B]
