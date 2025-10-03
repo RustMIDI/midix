@@ -26,14 +26,14 @@ impl<'a> Iterator for OptTimedEventIterator<'a> {
 /// An iterator returned from [`ParsedMidiFile::into_events`]
 pub struct TimedEventIterator<'a> {
     len_remaining: usize,
-    header: MidiFileHeader,
+    timing: Timing,
     tracks: alloc::vec::IntoIter<Track<'a>>,
     cur_track: CurrentTrack<'a>,
     file_tempo: Option<Tempo>,
 }
 impl<'a> TimedEventIterator<'a> {
     pub(super) fn new(file: MidiFile<'a>) -> Option<Self> {
-        let header = file.header;
+        let timing = file.timing;
 
         let (size, tracks, next, file_tempo) = match file.format {
             Format::SequentiallyIndependent(t) => {
@@ -57,11 +57,11 @@ impl<'a> TimedEventIterator<'a> {
                 (size, alloc::vec::Vec::new().into_iter(), track, Some(tempo))
             }
         };
-        let cur_track = CurrentTrack::new(next, file_tempo, header.timing());
+        let cur_track = CurrentTrack::new(next, file_tempo, timing);
 
         Some(Self {
             len_remaining: size,
-            header,
+            timing,
             tracks,
             cur_track,
             file_tempo,
@@ -80,8 +80,7 @@ impl<'a> Iterator for TimedEventIterator<'a> {
                 }
                 None => {
                     let next_track = self.tracks.next()?;
-                    let next_track =
-                        CurrentTrack::new(next_track, self.file_tempo, self.header.timing());
+                    let next_track = CurrentTrack::new(next_track, self.file_tempo, self.timing);
                     self.cur_track = next_track;
                 }
             }
@@ -99,7 +98,7 @@ struct CurrentTrack<'a> {
 }
 
 impl<'a> CurrentTrack<'a> {
-    fn new(track: Track<'a>, file_tempo: Option<Tempo>, timing: &Timing) -> Self {
+    fn new(track: Track<'a>, file_tempo: Option<Tempo>, timing: Timing) -> Self {
         let track_tempo = file_tempo.unwrap_or(track.info().tempo);
         let micros_per_quarter_note = track_tempo.micros_per_quarter_note();
 
@@ -244,11 +243,11 @@ fn tempo_event(delta_ticks: u32, micros_per_quarter: u32) -> TrackEvent<'static>
 
 #[test]
 fn test_empty_file_returns_none_iterator() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let timing = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
     let format = Format::Simultaneous(alloc::vec![]);
-    let file = MidiFile { header, format };
+    let file = MidiFile { timing, format };
 
     let mut iter = file.into_events();
     assert_eq!(iter.next(), None);
@@ -256,13 +255,16 @@ fn test_empty_file_returns_none_iterator() {
 
 #[test]
 fn test_single_track_single_event() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
     let events = alloc::vec![tempo_event(0, 500_000), note_on_event(0, 60, 100, 0),];
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let mut iter = file.into_events();
     let event = iter.next().unwrap();
@@ -281,9 +283,9 @@ fn test_single_track_single_event() {
 
 #[test]
 fn test_single_track_multiple_events_with_delta_time() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
     let events = alloc::vec![
         tempo_event(0, 500_000),
         note_on_event(0, 60, 100, 0),
@@ -292,7 +294,10 @@ fn test_single_track_multiple_events_with_delta_time() {
     ];
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 3);
@@ -306,9 +311,9 @@ fn test_single_track_multiple_events_with_delta_time() {
 
 #[test]
 fn test_simultaneous_format_multiple_tracks() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
 
     let track1_events = alloc::vec![
         tempo_event(0, 500_000),
@@ -321,7 +326,10 @@ fn test_simultaneous_format_multiple_tracks() {
     let track2 = Track::new(track2_events);
 
     let format = Format::Simultaneous(alloc::vec![track1, track2]);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 4);
@@ -334,9 +342,9 @@ fn test_simultaneous_format_multiple_tracks() {
 
 #[test]
 fn test_sequentially_independent_format() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x03, 0xC0],
-    }));
+    });
 
     let track1_events = alloc::vec![
         tempo_event(0, 1_000_000),
@@ -353,7 +361,10 @@ fn test_sequentially_independent_format() {
     let track2 = Track::new(track2_events);
 
     let format = Format::SequentiallyIndependent(alloc::vec![track1, track2]);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 4);
@@ -370,7 +381,7 @@ fn test_smpte_timing() {
         fps: SmpteFps::Thirty,
         ticks_per_frame: DataByte::new(40).unwrap(),
     };
-    let header = MidiFileHeader::new(Timing::Smpte(smpte));
+    let header = Timing::Smpte(smpte);
 
     let events = alloc::vec![
         note_on_event(0, 60, 100, 0),
@@ -379,7 +390,10 @@ fn test_smpte_timing() {
     ];
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 3);
@@ -391,9 +405,9 @@ fn test_smpte_timing() {
 
 #[test]
 fn test_mixed_event_types() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
 
     let events = alloc::vec![
         tempo_event(0, 500_000),
@@ -422,7 +436,10 @@ fn test_mixed_event_types() {
 
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 4);
@@ -464,9 +481,9 @@ fn test_mixed_event_types() {
 
 #[test]
 fn test_system_exclusive_events() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
 
     let sysex_data = alloc::vec![0xF0, 0x43, 0x12, 0x00, 0xF7];
     let events = alloc::vec![
@@ -481,7 +498,10 @@ fn test_system_exclusive_events() {
 
     let track = Track::new(events);
     let format = Format::SingleMultiChannel(track);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 3);
@@ -495,9 +515,9 @@ fn test_system_exclusive_events() {
 
 #[test]
 fn test_file_tempo_override_in_simultaneous_format() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
 
     let track1_events = alloc::vec![tempo_event(0, 600_000), note_on_event(0, 60, 100, 0),];
     let track1 = Track::new(track1_events);
@@ -506,7 +526,10 @@ fn test_file_tempo_override_in_simultaneous_format() {
     let track2 = Track::new(track2_events);
 
     let format = Format::Simultaneous(alloc::vec![track1, track2]);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
     assert_eq!(events.len(), 2);
@@ -517,9 +540,9 @@ fn test_file_tempo_override_in_simultaneous_format() {
 
 #[test]
 fn test_empty_track_handling() {
-    let header = MidiFileHeader::new(Timing::TicksPerQuarterNote(TicksPerQuarterNote {
+    let header = Timing::TicksPerQuarterNote(TicksPerQuarterNote {
         inner: [0x01, 0xE0],
-    }));
+    });
 
     let track1_events = alloc::vec![
         tempo_event(0, 500_000),
@@ -534,7 +557,10 @@ fn test_empty_track_handling() {
     let track3 = Track::new(track3_events);
 
     let format = Format::Simultaneous(alloc::vec![track1, track2, track3]);
-    let file = MidiFile { header, format };
+    let file = MidiFile {
+        timing: header,
+        format,
+    };
 
     let events: alloc::vec::Vec<_> = file.into_events().collect();
 

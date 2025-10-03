@@ -117,9 +117,6 @@ impl<'a> MidiFileBuilder<'a> {
             return Err(FileError::NoTiming);
         };
 
-        Ok(MidiFile {
-            format,
-            header: MidiFileHeader::new(timing),
-        })
+        Ok(MidiFile { format, timing })
     }
 }

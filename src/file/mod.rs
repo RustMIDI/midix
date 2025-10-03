@@ -10,8 +10,6 @@ use alloc::{borrow::Cow, vec::Vec};
 use builder::*;
 mod format;
 pub use format::*;
-mod header;
-pub use header::*;
 mod track;
 pub use track::*;
 
@@ -22,7 +20,7 @@ use crate::{
     ParseError,
     events::LiveEvent,
     message::Timed,
-    prelude::FormatType,
+    prelude::{FormatType, Timing},
     reader::{ReadResult, Reader, ReaderError, ReaderErrorKind},
 };
 
@@ -32,7 +30,7 @@ TODO
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub struct MidiFile<'a> {
-    header: MidiFileHeader,
+    timing: Timing,
     format: Format<'a>,
 }
 #[cfg(feature = "bevy_asset")]
@@ -72,8 +70,8 @@ impl<'a> MidiFile<'a> {
     }
 
     /// Returns header info
-    pub fn header(&self) -> &MidiFileHeader {
-        &self.header
+    pub fn timing(&self) -> Timing {
+        self.timing
     }
 
     /// Executes the provided function for all the tracks in the format.
