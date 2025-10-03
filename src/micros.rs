@@ -6,7 +6,7 @@ pub trait DurationExt {
     fn to_micros(&self) -> UMicros;
 }
 
-impl DurationExt for std::time::Duration {
+impl DurationExt for core::time::Duration {
     fn to_micros(&self) -> UMicros {
         UMicros(self.as_micros() as u64)
     }
