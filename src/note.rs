@@ -106,7 +106,7 @@ impl Note {
         self.0.0
     }
 }
-/// Efficiently make a note.
+/// Create a note the easy way.
 ///
 ///
 /// ## Example
