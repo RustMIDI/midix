@@ -1,4 +1,7 @@
-use crate::prelude::*;
+use crate::{
+    file::chunk::{RawHeaderChunk, TrackChunkHeader, UnknownChunk},
+    prelude::*,
+};
 
 mod chunk;
 pub use chunk::*;

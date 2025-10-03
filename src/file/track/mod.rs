@@ -1,10 +1,20 @@
+#![doc = r#"
+Contains types that identify events in tracks
+"#]
+
+mod event;
+pub use event::*;
+
+mod message;
+pub use message::*;
+
 use alloc::vec::Vec;
 
 use crate::{
     channel::Channel,
     events::LiveEvent,
+    file::{BytesText, SmpteOffset, Tempo, TimeSignature},
     message::Ticked,
-    prelude::{BytesText, SmpteOffset, Tempo, TimeSignature, TrackEvent, TrackMessage},
 };
 
 #[doc = r#"

@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::file::chunk::{RawHeaderChunk, RawTrackChunk, UnknownChunk};
 
 #[doc = r#"
 Reads the full length of all chunk types
@@ -23,7 +23,7 @@ pub enum ChunkEvent<'a> {
     /// See [`UnknownChunk`] for a breakdown on layout
     Unknown(UnknownChunk<'a>),
     /// End of File
-    EOF,
+    Eof,
 }
 
 impl From<RawHeaderChunk> for ChunkEvent<'_> {
@@ -48,6 +48,6 @@ impl ChunkEvent<'_> {
     /// True if the event is the end of a file
     #[inline]
     pub const fn is_eof(&self) -> bool {
-        matches!(self, Self::EOF)
+        matches!(self, Self::Eof)
     }
 }

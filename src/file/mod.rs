@@ -5,24 +5,30 @@ TODO
 "#]
 
 mod builder;
+pub(crate) use builder::*;
 
-use alloc::{borrow::Cow, vec::Vec};
-use builder::*;
 mod format;
 pub use format::*;
+
 mod track;
 pub use track::*;
 
 mod timed_event_iter;
 pub use timed_event_iter::*;
 
+mod timing;
+pub use timing::*;
+
+mod meta;
+pub use meta::*;
+
 use crate::{
     ParseError,
     events::LiveEvent,
     message::Timed,
-    prelude::{FormatType, Timing},
     reader::{ReadResult, Reader, ReaderError, ReaderErrorKind},
 };
+use alloc::{borrow::Cow, vec::Vec};
 
 #[doc = r#"
 TODO

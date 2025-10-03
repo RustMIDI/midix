@@ -113,7 +113,6 @@ pub mod channel;
 
 pub mod events;
 pub mod file;
-pub mod file_repr;
 
 pub mod reader;
 
@@ -158,13 +157,12 @@ pub mod prelude {
         channel::*,
         events::*,
         file::*,
-        file_repr::{chunk::*, meta::*, track::*, *},
         message::{MidiMessage, channel::*, system::*, time::*},
         micros::*,
         note,
     };
 
-    pub use crate::reader::{MidiSource, ReadResult, Reader};
+    pub use crate::reader::{MidiSource, ReadResult, Reader, ReaderError, ReaderErrorKind};
 
     #[allow(unused_imports)]
     pub(crate) use crate::reader::inv_data;

@@ -1,8 +1,16 @@
-use alloc::vec::Vec;
+mod format;
+pub use format::*;
 
-use crate::{prelude::*, reader::ReaderErrorKind};
+pub mod chunk;
+pub mod events;
 
 use super::MidiFile;
+use crate::{
+    file::{builder::chunk::UnknownChunk, events::ChunkEvent},
+    prelude::*,
+    reader::ReaderErrorKind,
+};
+use alloc::vec::Vec;
 
 #[derive(Default)]
 pub enum FormatStage<'a> {
@@ -106,7 +114,7 @@ impl<'a> MidiFileBuilder<'a> {
                 self.unknown_chunks.push(data);
                 Ok(())
             }
-            EOF => Err(ReaderErrorKind::OutOfBounds),
+            Eof => Err(ReaderErrorKind::OutOfBounds),
         }
     }
     pub fn build(self) -> Result<MidiFile<'a>, FileError> {
@@ -119,4 +127,24 @@ impl<'a> MidiFileBuilder<'a> {
 
         Ok(MidiFile { format, timing })
     }
+}
+
+/// Represents a 4 character type
+///
+/// Each chunk has a 4-character type and a 32-bit length,
+/// which is the number of bytes in the chunk. This structure allows
+/// future chunk types to be designed which may be easily be ignored
+/// if encountered by a program written before the chunk type is introduced.
+#[derive(Copy, Debug, Clone, PartialEq, Eq)]
+pub enum MidiChunkType {
+    /// Represents the byte length of the midi header.
+    ///
+    /// Begins with `"MThd"`
+    Header,
+    /// Represents the byte length of a midi track
+    ///
+    /// Begins with `"MTrk"`
+    Track,
+    /// A chunk type that is not known by this crate
+    Unknown,
 }

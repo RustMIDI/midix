@@ -17,7 +17,13 @@ pub use error::*;
 pub use source::*;
 use state::{ParseState, ReaderState};
 
-use crate::prelude::*;
+use crate::{
+    file::{
+        chunk::{RawHeaderChunk, RawTrackChunk, TrackChunkHeader, UnknownChunk},
+        events::{ChunkEvent, FileEvent},
+    },
+    prelude::*,
+};
 
 #[doc = r#"
 A MIDI event reader.
@@ -348,7 +354,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                             if e.is_out_of_bounds() {
                                 // Inside Midi + UnexpectedEof should only fire at the end of a file.
                                 self.state.set_parse_state(ParseState::Done);
-                                return Ok(ChunkEvent::EOF);
+                                return Ok(ChunkEvent::Eof);
                             } else {
                                 return Err(e);
                             }
@@ -386,7 +392,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                     self.state.set_parse_state(ParseState::InsideMidi);
                     continue;
                 }
-                ParseState::Done => break ChunkEvent::EOF,
+                ParseState::Done => break ChunkEvent::Eof,
             }
         };
 
