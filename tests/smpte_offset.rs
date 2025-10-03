@@ -355,6 +355,7 @@ fn test_multiple_tracks_with_different_offsets() {
     let mut offsets = Vec::new();
 
     while let Ok(event) = reader.read_event() {
+        println!("ok");
         if let FileEvent::TrackEvent(track_event) = event
             && let TrackMessage::Meta(MetaMessage::SmpteOffset(offset)) = track_event.event()
         {
