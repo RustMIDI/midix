@@ -195,7 +195,7 @@ impl FromLiveEventBytes for ChannelVoiceMessage {
                 let mut temp = Reader::from_byte_slice(data);
                 let c = Controller::read(&mut temp).map_err(|e| match e.kind {
                     ReaderErrorKind::ParseError(p) => p,
-                    ReaderErrorKind::OutOfBounds => ParseError::MissingData,
+                    ReaderErrorKind::OutOfBounds | ReaderErrorKind::Eof => ParseError::MissingData,
                 })?;
                 VoiceEvent::ControlChange(c)
             }

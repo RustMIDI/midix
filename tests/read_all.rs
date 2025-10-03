@@ -1,16 +1,13 @@
-use midix::{file::builder::event::FileEvent, reader::Reader};
+use midix::reader::{Reader, ReaderErrorKind};
 
 fn loop_through(bytes: &[u8]) {
     let mut reader = Reader::from_byte_slice(bytes);
 
     loop {
-        match reader.read_event() {
-            Ok(e) => {
-                if e == FileEvent::Eof {
-                    break;
-                }
-            }
-            Err(e) => {
+        if let Err(e) = reader.read_event() {
+            if matches!(e.error_kind(), ReaderErrorKind::Eof) {
+                break;
+            } else {
                 panic!("Error at {}, {:?}", reader.buffer_position(), e);
             }
         }
@@ -47,9 +44,13 @@ fn read_pi_damaged() {
     let bytes = include_bytes!("../test-asset/PiDamaged.mid");
     let mut reader = Reader::from_byte_slice(bytes);
 
-    while let Ok(e) = reader.read_event() {
-        if e == FileEvent::Eof {
-            panic!("Corrupted file should not have yielded an eof event")
+    loop {
+        if let Err(e) = reader.read_event() {
+            if matches!(e.error_kind(), ReaderErrorKind::Eof) {
+                panic!("Corrupted file should not have yielded an eof event")
+            } else {
+                return;
+            }
         }
     }
 }

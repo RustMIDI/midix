@@ -46,6 +46,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
+          components: clippy
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
       - name: Install alsa and udev
@@ -55,16 +56,17 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
+          args: --no-default-features
       - name: Run cargo clippy (std)
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --features std
+          args: --no-default-features --features std
       - name: Run cargo clippy (bevy)
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --features bevy
+          args: --features "bevy bevy_asset tracing serde"
   test:
     strategy:
       matrix:
@@ -90,7 +92,7 @@ jobs:
       - name: Build & run unit and e2e tests (no features)
         run: cargo test --lib --tests --no-default-features
       - name: Build & run unit and e2e tests (all features)
-        run: cargo test --lib --tests --features all
+        run: cargo test --lib --tests --features "std bevy bevy_asset tracing serde"
   all-doc-tests:
     runs-on: ubuntu-latest
     steps:
@@ -110,4 +112,4 @@ jobs:
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Run doc tests with all features (this also compiles README examples)
-        run: cargo test --doc --features bevy
+        run: cargo test --doc

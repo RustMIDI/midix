@@ -19,7 +19,7 @@ This type is yielded by [`Reader::read_event`] and will be consumed by a Writer 
 
 # Overview
 
-Except [`FileEvent::Eof`] Events can be placed into two categories
+Events can be placed into two categories:
 
 ## Chunk Events
 
@@ -71,9 +71,6 @@ pub enum FileEvent<'a> {
     ///
     /// See [`TrackEvent`] for a detailed breakdown
     TrackEvent(TrackEvent<'a>),
-
-    /// Yielded when no more bytes can be read
-    Eof,
 }
 
 impl From<RawHeaderChunk> for FileEvent<'_> {

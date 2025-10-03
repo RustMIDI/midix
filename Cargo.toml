@@ -1,6 +1,6 @@
 [package]
 name = "midix"
-version = "4.0.0-alpha.5"
+version = "4.0.0-alpha.6"
 authors = ["dsgallups <dsgallups@protonmail.com>"]
 edition = "2024"
 description = "MIDI structures designed for humans"
@@ -24,7 +24,7 @@ serde = ["dep:serde"]
 
 
 [dependencies.bevy]
-version = "0.17.0-rc"
+version = "0.17"
 optional = true
 default-features = false
 

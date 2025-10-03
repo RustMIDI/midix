@@ -13,14 +13,17 @@ pub struct ReaderError {
 }
 
 /// A kind of error that a reader can produce
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum ReaderErrorKind {
     /// Parsing errors
     #[error("Parsing {0}")]
     ParseError(#[from] ParseError),
-    /// Reading out of bounds.
+    /// Reading out of bounds. If the read is passed the length of the file, then [`ReaderErrorKind::Eof`] is returned.
     #[error("Read out of bounds!")]
     OutOfBounds,
+    /// The end of the file has been reached.
+    #[error("End of file read!")]
+    Eof,
 }
 
 impl ReaderErrorKind {
@@ -34,10 +37,11 @@ impl ReaderError {
     pub const fn new(position: usize, kind: ReaderErrorKind) -> Self {
         Self { position, kind }
     }
-    /// True if out of bounds or unexpected end of file
+    /// True if out of bounds
     pub const fn is_out_of_bounds(&self) -> bool {
         matches!(self.kind, ReaderErrorKind::OutOfBounds)
     }
+
     /// Returns the error kind of the reader.
     pub fn error_kind(&self) -> &ReaderErrorKind {
         &self.kind
@@ -52,14 +56,6 @@ impl ReaderError {
         Self {
             position,
             kind: ReaderErrorKind::ParseError(error),
-        }
-    }
-
-    /// Create a new out of bounds error
-    pub const fn oob(position: usize) -> Self {
-        Self {
-            position,
-            kind: ReaderErrorKind::OutOfBounds,
         }
     }
 }
