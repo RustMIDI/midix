@@ -3,7 +3,7 @@ use crate::{
     channel::Channel,
     events::FromLiveEventBytes,
     message::VoiceEvent,
-    reader::{MidiSource, ReadError, ReadResult, Reader, ReaderError, ReaderErrorKind, inv_data},
+    reader::{MidiSource, ReadResult, Reader, ReaderError, ReaderErrorKind, inv_data},
 };
 
 /// Represents a MIDI voice message.
@@ -192,13 +192,10 @@ impl FromLiveEventBytes for ChannelVoiceMessage {
                 velocity: Velocity::new(data.get_byte(1).ok_or(ParseError::MissingData)?)?,
             },
             0xB => {
-                // TODO: really need to unify this
                 let mut temp = Reader::from_byte_slice(data);
                 let c = Controller::read(&mut temp).map_err(|e| match e.kind {
                     ReaderErrorKind::ParseError(p) => p,
-                    ReaderErrorKind::ReadError(p) => match p {
-                        ReadError::OutOfBounds => ParseError::MissingData,
-                    },
+                    ReaderErrorKind::OutOfBounds => ParseError::MissingData,
                 })?;
                 VoiceEvent::ControlChange(c)
             }

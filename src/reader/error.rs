@@ -3,7 +3,7 @@ use crate::{ChunkError, ParseError};
 use thiserror::Error;
 
 #[doc = r#"
-A set of errors that can occur while reading something into a midi representation
+A set of errors that can occur while reading data into the midi representation
 "#]
 #[derive(Debug, Error)]
 #[error("Reading at Position {position}, {kind}")]
@@ -18,23 +18,15 @@ pub enum ReaderErrorKind {
     /// Parsing errors
     #[error("Parsing {0}")]
     ParseError(#[from] ParseError),
-    /// Errors unrelated to parsing (out of bounds)
-    #[error("Reading {0}")]
-    ReadError(#[from] ReadError),
+    /// Reading out of bounds.
+    #[error("Read out of bounds!")]
+    OutOfBounds,
 }
 
 impl ReaderErrorKind {
     pub(crate) const fn chunk(chunk_err: ChunkError) -> Self {
         Self::ParseError(ParseError::Chunk(chunk_err))
     }
-}
-
-/// Errors reading from some [`MidiSource`](crate::prelude::MidiSource)
-#[derive(Debug, Error)]
-pub enum ReadError {
-    /// Read out of bounds
-    #[error("Read out of bounds!")]
-    OutOfBounds,
 }
 
 impl ReaderError {
@@ -44,10 +36,15 @@ impl ReaderError {
     }
     /// True if out of bounds or unexpected end of file
     pub const fn is_out_of_bounds(&self) -> bool {
-        matches!(
-            self.kind,
-            ReaderErrorKind::ReadError(ReadError::OutOfBounds)
-        )
+        matches!(self.kind, ReaderErrorKind::OutOfBounds)
+    }
+    /// Returns the error kind of the reader.
+    pub fn error_kind(&self) -> &ReaderErrorKind {
+        &self.kind
+    }
+    /// Returns the position where the read error occurred.
+    pub fn position(&self) -> usize {
+        self.position
     }
 
     /// Create a new invalid data error
@@ -62,31 +59,18 @@ impl ReaderError {
     pub const fn oob(position: usize) -> Self {
         Self {
             position,
-            kind: ReaderErrorKind::ReadError(ReadError::OutOfBounds),
+            kind: ReaderErrorKind::OutOfBounds,
         }
     }
 }
 
-/// A result type that is either `T` or an [`io::Error`].
+/// The Read Result type (see [`ReaderError`])
 ///
 /// This may change in a future release if `midix`
 /// should support `no-std` environments.
 pub type ReadResult<T> = Result<T, ReaderError>;
 
-// pub(crate) fn unexp_eof() -> ReaderError {
-//     io::Error::new(ErrorKind::UnexpectedEof, "Read past the end of the file").into()
-// }
-
 pub(crate) fn inv_data<R>(reader: &mut Reader<R>, v: impl Into<ParseError>) -> ReaderError {
     reader.set_last_error_offset(reader.buffer_position());
     ReaderError::parse_error(reader.buffer_position(), v.into())
 }
-// #[allow(dead_code)]
-// pub(crate) fn inv_input<R>(reader: &mut Reader<R>, v: impl fmt::Display) -> ReaderError {
-//     reader.set_last_error_offset(reader.buffer_position());
-//     io::Error::new(
-//         ErrorKind::InvalidInput,
-//         format!("Cursor at {}: {}", reader.buffer_position(), v),
-//     )
-//     .into()
-// }
