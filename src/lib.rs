@@ -23,6 +23,7 @@ MIDI can be interpreted in two main ways: through `LiveEvent`s and regular file 
 To read from a file, use the [`Reader`](crate::prelude::Reader):
 ```rust
 use midix::prelude::*;
+use midix::file::builder::event::FileEvent;
 
 let midi_header = [
     /* MIDI Header */

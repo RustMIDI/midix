@@ -59,6 +59,7 @@ is not true, then the cursor will fail on the next read event.
 # Example
 ```rust
 use midix::prelude::*;
+use midix::file::builder::event::FileEvent;
 
 let midi_header = [
     /* MIDI Header */
