@@ -76,6 +76,20 @@ impl<'a> MidiFile<'a> {
         &self.header
     }
 
+    /// Executes the provided function for all the tracks in the format.
+    ///
+    /// Useful if you don't want to allocate more data on the stack.
+    pub fn for_each_track<F>(&self, mut func: F)
+    where
+        F: FnMut(&Track),
+    {
+        match &self.format {
+            Format::SequentiallyIndependent(t) => t.iter().for_each(func),
+            Format::Simultaneous(s) => s.iter().for_each(func),
+            Format::SingleMultiChannel(c) => func(c),
+        }
+    }
+
     /// Returns a track list
     pub fn tracks(&self) -> Vec<&Track<'a>> {
         match &self.format {
