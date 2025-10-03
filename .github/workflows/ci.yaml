@@ -46,6 +46,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
+          components: clippy
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
       - name: Install alsa and udev
@@ -55,16 +56,17 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
+          args: --no-default-features
       - name: Run cargo clippy (std)
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --features std
+          args: --no-default-features --features std
       - name: Run cargo clippy (bevy)
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --features bevy
+          args: --features "bevy bevy_asset tracing serde"
   test:
     strategy:
       matrix:
