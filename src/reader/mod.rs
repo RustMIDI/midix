@@ -18,7 +18,7 @@ pub use source::*;
 use state::{ParseState, ReaderState};
 
 use crate::{
-    file::{
+    file::builder::{
         chunk::{RawHeaderChunk, RawTrackChunk, TrackChunkHeader, UnknownChunk},
         events::{ChunkEvent, FileEvent},
     },
@@ -276,7 +276,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                         Ok(c) => c,
                         Err(e) => {
                             if e.is_out_of_bounds() {
-                                return Ok(FileEvent::EOF);
+                                return Ok(FileEvent::Eof);
                             } else {
                                 return Err(e);
                             }
@@ -321,7 +321,7 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                     let ev = TrackEvent::read(self, &mut running_status)?;
                     break FileEvent::TrackEvent(ev);
                 }
-                ParseState::Done => break FileEvent::EOF,
+                ParseState::Done => break FileEvent::Eof,
             }
         };
 

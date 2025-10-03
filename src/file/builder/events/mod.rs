@@ -1,5 +1,11 @@
+#![doc = r#"
+Contains events that should be yielded when parsing a midi file.
+
+You will may utilize these types when using a [`Reader`].
+"#]
+
 use crate::{
-    file::chunk::{RawHeaderChunk, TrackChunkHeader, UnknownChunk},
+    file::builder::chunk::{RawHeaderChunk, TrackChunkHeader, UnknownChunk},
     prelude::*,
 };
 
@@ -67,7 +73,7 @@ pub enum FileEvent<'a> {
     TrackEvent(TrackEvent<'a>),
 
     /// Yielded when no more bytes can be read
-    EOF,
+    Eof,
 }
 
 impl From<RawHeaderChunk> for FileEvent<'_> {

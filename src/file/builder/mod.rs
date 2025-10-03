@@ -6,14 +6,14 @@ pub mod events;
 
 use super::MidiFile;
 use crate::{
-    file::{builder::chunk::UnknownChunk, events::ChunkEvent},
+    file::builder::{chunk::UnknownChunk, events::ChunkEvent},
     prelude::*,
     reader::ReaderErrorKind,
 };
 use alloc::vec::Vec;
 
 #[derive(Default)]
-pub enum FormatStage<'a> {
+enum FormatStage<'a> {
     #[default]
     Unknown,
     KnownFormat(RawFormat),
@@ -21,6 +21,7 @@ pub enum FormatStage<'a> {
     Formatted(Format<'a>),
 }
 
+/// A builder used to create a new [`MidiFile`].
 #[derive(Default)]
 pub struct MidiFileBuilder<'a> {
     format: FormatStage<'a>,
@@ -30,6 +31,7 @@ pub struct MidiFileBuilder<'a> {
 }
 
 impl<'a> MidiFileBuilder<'a> {
+    /// Handles a chunk of a midi file.
     pub fn handle_chunk<'b: 'a>(&mut self, chunk: ChunkEvent<'b>) -> Result<(), ReaderErrorKind> {
         use ChunkEvent::*;
         match chunk {
@@ -117,6 +119,7 @@ impl<'a> MidiFileBuilder<'a> {
             Eof => Err(ReaderErrorKind::OutOfBounds),
         }
     }
+    /// Attempts to finish the midifile from the provided chunks.
     pub fn build(self) -> Result<MidiFile<'a>, FileError> {
         let FormatStage::Formatted(format) = self.format else {
             return Err(FileError::NoFormat);
@@ -127,24 +130,4 @@ impl<'a> MidiFileBuilder<'a> {
 
         Ok(MidiFile { format, timing })
     }
-}
-
-/// Represents a 4 character type
-///
-/// Each chunk has a 4-character type and a 32-bit length,
-/// which is the number of bytes in the chunk. This structure allows
-/// future chunk types to be designed which may be easily be ignored
-/// if encountered by a program written before the chunk type is introduced.
-#[derive(Copy, Debug, Clone, PartialEq, Eq)]
-pub enum MidiChunkType {
-    /// Represents the byte length of the midi header.
-    ///
-    /// Begins with `"MThd"`
-    Header,
-    /// Represents the byte length of a midi track
-    ///
-    /// Begins with `"MTrk"`
-    Track,
-    /// A chunk type that is not known by this crate
-    Unknown,
 }

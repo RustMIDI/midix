@@ -1,4 +1,4 @@
-use crate::file::chunk::{RawHeaderChunk, RawTrackChunk, UnknownChunk};
+use crate::file::builder::chunk::{RawHeaderChunk, RawTrackChunk, UnknownChunk};
 
 #[doc = r#"
 Reads the full length of all chunk types

@@ -1,11 +1,11 @@
 #![doc = r#"
 Rusty representation of a [`MidiFile`]
-
-TODO
 "#]
 
-mod builder;
-pub(crate) use builder::*;
+/// Contains the [`MidiFileBuilder`] and assocaited
+///
+/// MIDI file parsing events.
+pub mod builder;
 
 mod format;
 pub use format::*;
@@ -25,6 +25,7 @@ pub use meta::*;
 use crate::{
     ParseError,
     events::LiveEvent,
+    file::builder::MidiFileBuilder,
     message::Timed,
     reader::{ReadResult, Reader, ReaderError, ReaderErrorKind},
 };

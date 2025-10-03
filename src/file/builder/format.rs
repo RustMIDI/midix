@@ -1,3 +1,5 @@
+use crate::file::FormatType;
+
 #[doc = r#"
 
     FF 00 02 Sequence Number
@@ -58,66 +60,4 @@ impl RawFormat {
             SequentiallyIndependent(_) => FormatType::SequentiallyIndependent,
         }
     }
-}
-
-#[doc = r#"
-Identifies the type of the MIDI file.
-
-# Layout
-
-A Format 0 file has a header chunk followed by one track chunk.
-It is the most interchangeable representation of data. It is very
-useful for a simple single-track player in a program which needs
-to make synthesisers make sounds, but which is primarily concerned
-with something else such as mixers or sound effect boxes. It is very
-desirable to be able to produce such a format, even if your program
-is track-based, in order to work with these simple programs.
-
-A Format 1 or 2 file has a header chunk followed by one or more
-track chunks. programs which support several simultaneous tracks
-should be able to save and read data in format 1, a vertically one
-dimensional form, that is, as a collection of tracks. Programs which
-support several independent patterns should be able to save and read
-data in format 2, a horizontally one dimensional form. Providing these
-minimum capabilities will ensure maximum interchangeability.
-
-In a MIDI system with a computer and a SMPTE synchroniser which uses
-Song Pointer and Timing Clock, tempo maps (which describe the tempo
-throughout the track, and may also include time signature information,
-so that the bar number may be derived) are generally created on the
-computer. To use them with the synchroniser, it is necessary to transfer
-them from the computer. To make it easy for the synchroniser to extract
-this data from a MIDI File, tempo information should always be stored
-in the first MTrk chunk. For a format 0 file, the tempo will be
-scattered through the track and the tempo map reader should ignore the
-intervening events; for a format 1 file, the tempo map must be stored
-as the first track. It is polite to a tempo map reader to offer your
-user the ability to make a format 0 file with just the tempo, unless
-you can use format 1.
-
-All MIDI Files should specify tempo and time signature. If they don't,
-the time signature is assumed to be 4/4, and the tempo 120 beats per minute.
-In format 0, these meta-events should occur at least at the beginning of the
-single multi-channel track. In format 1, these meta-events should be contained
-in the first track. In format 2, each of the temporally independent patterns
-should contain at least initial time signature and tempo information.
-
-Format IDs to support other structures may be defined in the future. A program
-encountering an unknown format ID may still read other MTrk chunks it finds from
-the file, as format 1 or 2, if its user can make sense of them and arrange
-them into some other structure if appropriate. Also, more parameters may be
-added to the MThd chunk in the future: it is important to read and honour the
-length, even if it is longer than 6.
-
-"#]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FormatType {
-    /// Format 0
-    SingleMultiChannel,
-
-    /// Format 1
-    Simultaneous,
-
-    /// Format 2
-    SequentiallyIndependent,
 }
