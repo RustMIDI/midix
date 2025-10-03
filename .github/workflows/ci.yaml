@@ -92,7 +92,7 @@ jobs:
       - name: Build & run unit and e2e tests (no features)
         run: cargo test --lib --tests --no-default-features
       - name: Build & run unit and e2e tests (all features)
-        run: cargo test --lib --tests --features all
+        run: cargo test --lib --tests --features "std bevy bevy_asset tracing serde"
   all-doc-tests:
     runs-on: ubuntu-latest
     steps:
