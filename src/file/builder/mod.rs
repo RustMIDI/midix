@@ -117,7 +117,7 @@ impl<'a> MidiFileBuilder<'a> {
                 self.unknown_chunks.push(data);
                 Ok(())
             }
-            Eof => Err(ReaderErrorKind::OutOfBounds),
+            Eof => Err(ReaderErrorKind::Eof),
         }
     }
     /// Attempts to finish the midifile from the provided chunks.

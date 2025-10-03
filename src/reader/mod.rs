@@ -153,20 +153,28 @@ impl<'slc> Reader<Cow<'slc, [u8]>> {
 
 //internal implementations
 impl<'slc, R: MidiSource<'slc>> Reader<R> {
-    // Returns None if there's no bytes left to read
+    /// Reads the exact amount of bytes given the length.
+    ///
+    /// Errors with OutOfBounds if the result is beyond the total length of the source.
     pub(super) fn read_exact<'slf>(&'slf mut self, bytes: usize) -> ReadResult<Cow<'slc, [u8]>>
     where
         'slc: 'slf,
     {
         if self.buffer_position() > self.reader.max_len() {
-            return Err(ReaderError::oob(self.buffer_position()));
+            return Err(ReaderError::new(
+                self.buffer_position(),
+                ReaderErrorKind::OutOfBounds,
+            ));
         }
         let start = self.buffer_position();
 
         let end = start + bytes;
 
         if end > self.reader.max_len() {
-            return Err(ReaderError::oob(self.buffer_position()));
+            return Err(ReaderError::new(
+                self.buffer_position(),
+                ReaderErrorKind::OutOfBounds,
+            ));
         }
 
         self.state.increment_offset(bytes);
@@ -185,7 +193,10 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
             let me = unsafe { &*ptr };
             Ok(*me)
         } else {
-            Err(ReaderError::oob(self.buffer_position()))
+            Err(ReaderError::new(
+                self.buffer_position(),
+                ReaderErrorKind::OutOfBounds,
+            ))
         }
     }
 
@@ -196,7 +207,10 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
         let res = self
             .reader
             .get_byte(self.buffer_position())
-            .ok_or(ReaderError::oob(self.buffer_position()))?;
+            .ok_or(ReaderError::new(
+                self.buffer_position(),
+                ReaderErrorKind::OutOfBounds,
+            ))?;
         self.state.increment_offset(1);
 
         Ok(res)
@@ -209,7 +223,10 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
         let res = self
             .reader
             .get_byte(self.buffer_position())
-            .ok_or(ReaderError::oob(self.buffer_position()))?;
+            .ok_or(ReaderError::new(
+                self.buffer_position(),
+                ReaderErrorKind::OutOfBounds,
+            ))?;
         self.state.increment_offset(1);
         DataByte::new(res).map_err(|e| ReaderError::parse_error(self.buffer_position(), e))
     }
@@ -274,14 +291,15 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                 ParseState::InsideMidi => {
                     // expect only a header or track chunk
                     let chunk = match self.read_exact(4) {
-                        Ok(c) => c,
-                        Err(e) => {
-                            if e.is_out_of_bounds() {
-                                return Ok(FileEvent::Eof);
-                            } else {
+                        Ok(chunk) => chunk,
+                        Err(e) => match e.error_kind() {
+                            ReaderErrorKind::OutOfBounds => {
+                                return Err(ReaderError::new(e.position(), ReaderErrorKind::Eof));
+                            }
+                            _ => {
                                 return Err(e);
                             }
-                        }
+                        },
                     };
 
                     match chunk.as_ref() {
@@ -322,7 +340,12 @@ impl<'slc, R: MidiSource<'slc>> Reader<R> {
                     let ev = TrackEvent::read(self, &mut running_status)?;
                     break FileEvent::TrackEvent(ev);
                 }
-                ParseState::Done => break FileEvent::Eof,
+                ParseState::Done => {
+                    return Err(ReaderError::new(
+                        self.buffer_position(),
+                        ReaderErrorKind::Eof,
+                    ));
+                }
             }
         };
 

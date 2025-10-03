@@ -24,7 +24,7 @@ use thiserror::Error;
 // }
 
 /// All the ways parsing can go wrong
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum ParseError {
     /// Invalid databyte (leading 1)
     #[error("Invalid Data Byte: {0:0X}")]
@@ -81,7 +81,7 @@ impl ParseError {
     }
 }
 /// Problems reading a file's header
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum HeaderError {
     /// Type 0 MIDI Format (SingleMultiChannel) defines multiple tracks
     #[error("Type 0 MIDI Format (SingleMultiChannel) defined multiple tracks")]
@@ -107,7 +107,7 @@ impl From<HeaderError> for ParseError {
 }
 
 /// Problems reading a file's metamessages
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum MetaMessageError {
     /// contains varlen inner, should be 1.
     #[error("varlen for channel count was {0}. Expected 1.")]
@@ -129,7 +129,7 @@ impl From<MetaMessageError> for ParseError {
 }
 
 /// problems reading a track
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum TrackError {
     /// Invalid event
     #[error("Invalid event found: {0:0X}")]
@@ -143,7 +143,7 @@ impl From<TrackError> for ParseError {
 }
 
 /// Problems reading a chunk
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum ChunkError {
     /// Finding more than one header for a chunk
     #[error("Found more than one header for this chunk.")]
@@ -157,7 +157,7 @@ pub enum ChunkError {
 }
 
 /// Problems with the file after reading it through
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum FileError {
     /// No format was found
     #[error("The file's format couldn't be determined")]

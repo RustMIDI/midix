@@ -71,9 +71,6 @@ pub enum FileEvent<'a> {
     ///
     /// See [`TrackEvent`] for a detailed breakdown
     TrackEvent(TrackEvent<'a>),
-
-    /// Yielded when no more bytes can be read
-    Eof,
 }
 
 impl From<RawHeaderChunk> for FileEvent<'_> {
