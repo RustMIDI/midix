@@ -20,7 +20,7 @@ use state::{ParseState, ReaderState};
 use crate::{
     file::builder::{
         chunk::{RawHeaderChunk, RawTrackChunk, TrackChunkHeader, UnknownChunk},
-        events::{ChunkEvent, FileEvent},
+        event::{ChunkEvent, FileEvent},
     },
     prelude::*,
 };

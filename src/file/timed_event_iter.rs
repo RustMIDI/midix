@@ -23,7 +23,7 @@ impl<'a> Iterator for OptTimedEventIterator<'a> {
     }
 }
 
-/// An iterator returned from [`ParsedMidiFile::into_events`]
+/// An iterator returned from [`MidiFile::into_events`]
 pub struct TimedEventIterator<'a> {
     len_remaining: usize,
     timing: Timing,

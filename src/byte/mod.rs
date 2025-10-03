@@ -301,7 +301,7 @@ pub trait MidiWriter {
 }
 */
 
-/// Copies the nightly only feature `as_array` for [T], but specifically for Cow.
+/// Copies the nightly only feature `as_array` for `[T]`, but specifically for Cow.
 pub trait CowExt {
     /// Reinterpret this Cow as a reference to a static array
     fn as_array<const N: usize>(&self) -> Option<&[u8; N]>;

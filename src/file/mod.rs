@@ -2,9 +2,7 @@
 Rusty representation of a [`MidiFile`]
 "#]
 
-/// Contains the [`MidiFileBuilder`] and assocaited
-///
-/// MIDI file parsing events.
+/// Contains the [`MidiFileBuilder`] and associated [`FileEvent`](builder::event::FileEvent)s.
 pub mod builder;
 
 mod format;

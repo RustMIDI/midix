@@ -4,8 +4,8 @@ use crate::file::builder::chunk::{RawHeaderChunk, RawTrackChunk, UnknownChunk};
 Reads the full length of all chunk types
 
 
-This is different from [`FileEvent`] such that
-[`FileEvent::TrackEvent`] is not used. Instead,
+This is different from [`FileEvent`](crate::file::builder::event::FileEvent) such that
+[`FileEvent::TrackEvent`](crate::file::builder::event::FileEvent::TrackEvent) is not used. Instead,
 the full set of bytes from the identified track are yielded.
 "#]
 pub enum ChunkEvent<'a> {

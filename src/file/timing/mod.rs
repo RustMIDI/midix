@@ -6,7 +6,7 @@ use crate::{prelude::*, reader::ReaderError};
 /// The header timing type.
 ///
 /// This is either the number of ticks per quarter note or
-/// the alternative SMTPE format. See the [`RawHeaderChunk`] docs for more information.
+/// the alternative SMTPE format. See the [`RawHeaderChunk`](crate::file::builder::chunk::RawHeaderChunk) docs for more information.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "bevy", derive(bevy::reflect::Reflect))]
 pub enum Timing {

@@ -2,11 +2,12 @@ mod format;
 pub use format::*;
 
 pub mod chunk;
-pub mod events;
+
+pub mod event;
 
 use super::MidiFile;
 use crate::{
-    file::builder::{chunk::UnknownChunk, events::ChunkEvent},
+    file::builder::{chunk::UnknownChunk, event::ChunkEvent},
     prelude::*,
     reader::ReaderErrorKind,
 };

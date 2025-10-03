@@ -1,8 +1,7 @@
 use alloc::borrow::Cow;
 
 #[doc = r#"
-A System Exclusive messsage, found in
-both [`LiveEvent`](crate::prelude::LiveEvent)s and [`FileEvent`](crate::prelude::FileEvent)s.
+A System Exclusive messsage, found in both [`LiveEvent`](crate::prelude::LiveEvent)s and [`FileEvent`](crate::file::builder::event::FileEvent)s.
 
 # Overview
 

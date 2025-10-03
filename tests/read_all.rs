@@ -1,4 +1,4 @@
-use midix::{file::builder::events::FileEvent, reader::Reader};
+use midix::{file::builder::event::FileEvent, reader::Reader};
 
 fn loop_through(bytes: &[u8]) {
     let mut reader = Reader::from_byte_slice(bytes);

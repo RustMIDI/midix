@@ -9,8 +9,8 @@ not fall into th
 
 ## [`RawHeaderChunk`]
 This chunk type contains meta information about the MIDI file, such as
-- [`RawFormat`](crate::prelude::RawFormat), which identifies how tracks should be played, and the claimed track count
-- [`Timing`], which defines how delta-seconds are to be interpreted
+- [`RawFormat`](crate::file::builder::RawFormat), which identifies how tracks should be played, and the claimed track count
+- [`Timing`](crate::prelude::Timing), which defines how delta-seconds are to be interpreted
 
 ## [`]
 
