@@ -145,7 +145,7 @@ impl SmpteOffset {
             v => return Err(SmpteError::TrackFrame(v)),
         };
         let hour = data[0] & 0b0001_1111;
-        if hour > 24 {
+        if hour > 23 {
             return Err(SmpteError::HourOffset(hour));
         }
         let minute = data[1];
