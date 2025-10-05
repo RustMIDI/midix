@@ -2,22 +2,33 @@
 #![warn(clippy::print_stdout)]
 #![doc = r#####"
 # MIDIx
-A suite of tools used to read, modify, and manage MIDI-related systems
+
+A suite of tools used to read, modify, and manage
+[MIDI](https://en.wikipedia.org/wiki/MIDI)-related (Musical Instrument Digital
+Interface) systems.
 
 ## Overview
 
-`midix` provides users with human readable MIDI structures without invariant states. That is, the midi 1.0 specification has been strongly typed such that programatic commands built with this crate uphold invariants.
+`midix` provides users with human-readable MIDI structures without invariant
+states. That is, the [MIDI 1.0 specification](https://midi.org/midi-1-0-core-specifications)
+has been strongly typed such that programmatic commands built with this crate
+uphold invariants.
 
-`midix` provides a parser ([`Reader`](crate::prelude::Reader)) to read events from `.mid` files.
-calling [`Reader::read_event`](crate::prelude::Reader::read_event) will yield a [`FileEvent`](crate::file::builder::event::FileEvent).
+`midix` provides a parser ([`Reader`](crate::prelude::Reader)) to read events
+from `.mid` files. calling
+[`Reader::read_event`](crate::prelude::Reader::read_event) will yield a
+[`FileEvent`](crate::file::builder::event::FileEvent).
 
-Additionally, `midix` provides the user with [`LiveEvent::from_bytes`](crate::events::LiveEvent), which will parse events from a live MIDI source.
+Additionally, `midix` provides the user with
+[`LiveEvent::from_bytes`](crate::events::LiveEvent), which will parse events
+from a live MIDI source.
 
 You may also make your own MIDI representation using the provided structs.
 
 ## Getting Started
 
-MIDI can be interpreted in two main ways: through `LiveEvent`s and regular file `Events`.
+MIDI can be interpreted in two main ways: through `LiveEvent`s and regular file
+`Events`.
 
 ### Example
 To read from a file, use the [`Reader`](crate::prelude::Reader):
